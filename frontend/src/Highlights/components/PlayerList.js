@@ -25,7 +25,12 @@ const GET_TEAM_MEMBERS = gql`
  * @param {object} props.team - The currently selected team object from the parent.
  * @param {function} props.onSelectPlayer - Callback function when a player is clicked.
  */
-const PlayerList = ({ team, onSelectPlayer, initialPlayerId }) => {
+const PlayerList = ({
+  team,
+  onSelectPlayer,
+  onPlayersLoaded,
+  selectedPlayer,
+}) => {
   const teamHash = team?.id || "";
 
   // Apollo useQuery hook handles data fetching and state
@@ -36,32 +41,33 @@ const PlayerList = ({ team, onSelectPlayer, initialPlayerId }) => {
   });
 
   const teamPlayers = useMemo(() => {
+    console.log(data);
     const members = data?.teamMembers || [];
     return members
       .filter((m) => m.is_player)
       .map((m) => ({
         id: m.team_player_id,
+        firstName: m.user?.first_name || "",
+        lastName: m.user?.last_name || "",
         name: `${m.user?.first_name || ""} ${m.user?.last_name || ""}`.trim(),
         number: m.jersey_number,
-        raw: m,
-      }));
+      }))
+      .sort((a, b) => {
+        // Sort by jersey number first, then first name, then last name
+        const numA = Number(a.number) || 0;
+        const numB = Number(b.number) || 0;
+        if (numA !== numB) return numA - numB;
+        if (a.firstName !== b.firstName)
+          return a.firstName.localeCompare(b.firstName);
+        return a.lastName.localeCompare(b.lastName);
+      });
   }, [data]);
 
   useEffect(() => {
-    // Only run this when we have initialPlayerId and the players list is loaded
-    if (initialPlayerId && teamPlayers.length > 0) {
-      const playerFromUrl = teamPlayers.find((p) => p.id === initialPlayerId);
-
-      // If a player is found, trigger the parent's handler
-      if (playerFromUrl) {
-        // We use a slight delay or next tick to ensure the parent's state
-        // updates correctly if this runs right after the parent renders.
-        // It's crucial for syncing the parent state for deep-links/refresh.
-        onSelectPlayer(playerFromUrl);
-      }
+    if (onPlayersLoaded) {
+      onPlayersLoaded(teamPlayers); // Notify parent
     }
-    // Dependency: Rerun if URL ID changes OR if the list of players changes
-  }, [initialPlayerId, teamPlayers, onSelectPlayer]);
+  }, [teamPlayers, onPlayersLoaded]);
 
   if (!teamHash) {
     return <div className="player-list-info">Please select a team.</div>;
@@ -92,20 +98,30 @@ const PlayerList = ({ team, onSelectPlayer, initialPlayerId }) => {
 
   return (
     <div className="player-list-container">
-      <h3 className="player-list-title">{team.name} Roster</h3>
+      <h3>Players </h3>
       <ul className="player-items-list">
-        {teamPlayers.map((player) => (
-          <li
-            key={player.id}
-            className={`player-list-item ${
-              String(initialPlayerId) === String(player.id) ? "active" : ""
-            }`}
-            onClick={() => onSelectPlayer(player)}
-          >
-            <span className="player-number">{player.number || "N/A"}</span>
-            <span className="player-name">{player.name}</span>
-          </li>
-        ))}
+        {teamPlayers.map((player) => {
+          const initials = `${player.firstName[0] || ""}${
+            player.lastName[0] || ""
+          }`.toUpperCase();
+          return (
+            <li
+              key={player.id}
+              className={`player-list-item ${
+                selectedPlayer?.id === player.id ? "active" : ""
+              }`}
+              onClick={() => onSelectPlayer(player)}
+            >
+              <div className="player-info-column">
+                <div className="player-initials-circle">{initials}</div>
+                {player.number && (
+                  <div className="player-number">#{player.number}</div>
+                )}
+                <div className="player-name">{player.name}</div>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

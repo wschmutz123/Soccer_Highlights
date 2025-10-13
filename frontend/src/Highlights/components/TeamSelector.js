@@ -10,7 +10,7 @@ const API_URL = "https://lapi.traceup.com/upload-dev/data/db-ro/query";
  * @param {object} props - Component props
  * @param {function} props.onSelectTeam - Callback function when a team is selected
  */
-const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
+const TeamSelector = ({ onSelectTeam, initialTeamId, onTeamsLoaded }) => {
   const [teams, setTeams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState("");
 
@@ -36,10 +36,14 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
       );
       const fetchedTeams = responseData?.result[0]?.data?.data || [];
 
-      const standardizedTeams = fetchedTeams.map((team) => ({
-        id: team.team_hash, // Use team_hash as the unique ID
-        name: team.title, // Use title as the display name
-      }));
+      const standardizedTeams = fetchedTeams
+        .map((team) => ({
+          id: team.team_hash, // Use team_hash as the unique ID
+          name: team.title, // Use title as the display name
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      if (onTeamsLoaded) onTeamsLoaded();
 
       setTeams(standardizedTeams);
     } catch (err) {}
@@ -53,15 +57,20 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
   useEffect(() => {
     if (teams.length === 0 || initialized.current) return;
 
+    let initialTeam = null;
     if (initialTeamId) {
-      const initialTeam = teams.find((t) => t.id === initialTeamId);
-      if (initialTeam) {
-        setSelectedTeamId(initialTeam.id);
-        onSelectTeam(initialTeam);
-      }
+      initialTeam = teams.find((t) => t.id === initialTeamId);
     }
 
-    initialized.current = true; // mark as done
+    if (initialTeam) {
+      setSelectedTeamId(initialTeam.id);
+      onSelectTeam(initialTeam); // notify parent
+    } else {
+      // No initialTeamId, keep dropdown at placeholder
+      setSelectedTeamId(""); // shows "Choose a Team"
+    }
+
+    initialized.current = true;
   }, [teams, initialTeamId, onSelectTeam]);
 
   // 2. Handle dropdown change

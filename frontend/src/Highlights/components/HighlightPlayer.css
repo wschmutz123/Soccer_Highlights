@@ -29,36 +29,10 @@
 }
 
 /* --- Details Section --- */
-.highlight-details {
-  padding: 15px 0;
-  color: #ffffff;
-}
-
-.player-name-display {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 10px;
-  color: #007bff; /* Primary color for player name */
-}
-
 .highlight-event {
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 5px;
-}
-
-.event-name {
-  margin-left: 10px;
-  padding: 2px 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  font-weight: 700;
-}
-
-.highlight-counter {
-  font-size: 0.9rem;
-  color: #a0a0a0;
-  margin-top: 10px;
 }
 
 /* --- State Styles --- */
@@ -69,4 +43,57 @@
   padding: 50px;
   font-size: 1.5rem;
   align-self: center; /* Allows these to center vertically in the flex container */
+}
+
+.player-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.6); /* semi-transparent background */
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.player-initials-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.player-jersey {
+  font-weight: bold;
+}
+
+.player-name {
+  font-size: 14px;
+}
+
+.highlight-event {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.highlight-placeholder {
+  width: 100%;
+  height: 400px; /* match typical video size */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  color: #555;
+  background-color: #f0f0f0;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
 }

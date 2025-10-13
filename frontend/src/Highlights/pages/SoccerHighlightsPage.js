@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TeamSelector from "../components/TeamSelector";
 import PlayerList from "../components/PlayerList";
@@ -8,14 +8,14 @@ function SoccerHighlightsPage() {
   const navigate = useNavigate();
   const { teamId, playerId } = useParams();
 
+  const playerIdRef = useRef(playerId);
+
   // 2. State to hold the RESOLVED OBJECTS (derived from URL IDs)
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [teamsLoaded, setTeamsLoaded] = useState(false);
 
-  useEffect(() => {
-    // If teamId changes, clear previous player selection
-    setSelectedPlayer(null);
-  }, [teamId]);
+  const [players, setPlayers] = useState([]);
 
   // --- Handlers for clicks ---
   const handleTeamSelect = (team) => {
@@ -25,9 +25,24 @@ function SoccerHighlightsPage() {
 
   const handlePlayerSelect = (player) => {
     setSelectedPlayer(player);
-    const team = selectedTeam; // already selected team object
-    if (team) {
-      navigate(`/${team.id}/${player.id}`);
+    if (selectedTeam) {
+      navigate(`/${selectedTeam.id}/${player.id}`);
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedTeam || !playerIdRef) return;
+    const player = players.find((p) => p.id === playerIdRef.current);
+    if (player) setSelectedPlayer(player);
+  }, [selectedTeam, players]);
+
+  const handlePlayersLoaded = (loadedPlayers) => {
+    setPlayers(loadedPlayers);
+    if (playerIdRef.current) {
+      const player = loadedPlayers.find(
+        (p) => String(p.id) === String(playerIdRef.current)
+      );
+      if (player) handlePlayerSelect(player);
     }
   };
 
@@ -38,6 +53,7 @@ function SoccerHighlightsPage() {
         <TeamSelector
           onSelectTeam={handleTeamSelect}
           initialTeamId={teamId} // Prop to help TeamSelector initialize
+          onTeamsLoaded={() => setTeamsLoaded(true)}
         />
       </header>
       <main style={{ display: "flex" }}>
@@ -47,13 +63,14 @@ function SoccerHighlightsPage() {
             <PlayerList
               team={selectedTeam}
               onSelectPlayer={handlePlayerSelect}
-              initialPlayerId={playerId} // Prop to help PlayerList initialize
+              onPlayersLoaded={handlePlayersLoaded}
+              selectedPlayer={selectedPlayer}
             />
           )}
         </aside>
         <section style={{ flexGrow: 1 }}>
           {/* HighlightPlayer needs the RESOLVED player OBJECT */}
-          {selectedPlayer && <HighlightPlayer player={selectedPlayer} />}
+          {teamsLoaded && <HighlightPlayer player={selectedPlayer} />}
         </section>
       </main>
     </div>

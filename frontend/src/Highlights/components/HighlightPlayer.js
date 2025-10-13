@@ -27,7 +27,7 @@ const HighlightPlayer = ({ player }) => {
   const [highlights, setHighlights] = useState([]);
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0);
 
-  const { loading, error, data, refetch } = useQuery(GET_PLAYER_HIGHLIGHTS, {
+  const { loading, error, data } = useQuery(GET_PLAYER_HIGHLIGHTS, {
     variables: { teamPlayerId: teamPlayerId },
     skip: !teamPlayerId || isNaN(teamPlayerId),
   });
@@ -122,16 +122,18 @@ const HighlightPlayer = ({ player }) => {
     if (nextIndex < highlights.length) {
       setCurrentHighlightIndex(nextIndex);
     } else {
-      // Finished all highlights, loop back or just stop
-      setCurrentHighlightIndex(0);
-      videoRef.current.src = null;
+      // Finished all highlights, stop video
+      setCurrentHighlightIndex(currentHighlightIndex);
+      if (videoRef.current) {
+        videoRef.current.pause(); // stop the video
+      }
     }
   };
 
   if (!player) {
     return (
       <div className="highlight-player-placeholder">
-        Select a player to view highlights.
+        Choose a Team and Player to get Highlights
       </div>
     );
   }
@@ -169,24 +171,26 @@ const HighlightPlayer = ({ player }) => {
           controls
           autoPlay
           onTimeUpdate={handleVideoTimeUpdate}
-          // Use onTimeUpdate to precisely check the highlight's end time
         >
           Your browser does not support the video tag.
         </video>
-      </div>
 
-      <div className="highlight-details">
-        <h2 className="player-name-display">{player.name}</h2>
-        <p className="highlight-event">
-          Current Event:
-          <span className="event-name">
-            {currentHighlight?.event || "Starting..."}
-          </span>
-        </p>
-        <p className="highlight-counter">
-          Highlight {currentHighlightIndex + 1} of {highlights.length}
-        </p>
+        {/* Overlay for player info */}
+        <div className="player-overlay">
+          <div className="player-initials-circle">
+            {player.firstName?.[0]?.toUpperCase()}
+            {player.lastName?.[0]?.toUpperCase()}
+          </div>
+          {player.number && (
+            <div className="player-jersey">#{player.number}</div>
+          )}
+          <div className="player-name">{player.name}</div>
+          <div className="highlight-event">
+            {currentHighlight.event || "Starting..."}
+          </div>
+        </div>
       </div>
+      )
     </div>
   );
 };

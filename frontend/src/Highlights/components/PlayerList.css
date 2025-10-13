@@ -1,17 +1,7 @@
 /* PlayerList.css */
-
 .player-list-container {
   padding: 15px;
   height: 100%; /* Ensure it fills the height of the parent aside element */
-}
-
-.player-list-title {
-  font-size: 1.25rem;
-  color: #007bff; /* Use primary color for the title */
-  border-bottom: 2px solid #e9ecef;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
-  font-weight: 700;
 }
 
 .player-items-list {
@@ -24,32 +14,45 @@
 
 .player-list-item {
   display: flex;
-  align-items: center;
-  padding: 10px 10px;
-  margin-bottom: 5px;
-  border-radius: 4px;
-  background-color: #f8f9fa;
+  justify-content: center; /* center the column horizontally */
+  padding: 10px 0;
   cursor: pointer;
-  transition:
-    background-color 0.2s,
-    box-shadow 0.2s;
+  border-bottom: 1px solid #eee;
 }
 
-.player-list-item:hover {
-  background-color: #e9ecef;
-}
-
-/* Style for the currently selected player */
+/* Active player container */
 .player-list-item.active {
-  background-color: #007bff; /* Primary color background */
-  color: #ffffff; /* White text */
+  background: linear-gradient(90deg, #007bff, #3399ff); /* subtle gradient */
+  color: #ffffff;
   font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+  border-radius: 8px; /* rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* soft shadow */
+  transform: scale(1.02); /* subtle pop effect */
+  transition: all 0.2s ease-in-out;
 }
 
+/* Initials circle for active player */
+.player-list-item.active .player-initials-circle {
+  background-color: #ffffff;
+  color: #007bff;
+  font-weight: bold;
+  border: 2px solid #ffffff;
+}
+
+/* Player number for active player */
 .player-list-item.active .player-number {
-  background-color: #ffffff; /* White background for number */
-  color: #007bff; /* Primary color text for number */
+  background-color: rgba(255, 255, 255, 0.2); /* semi-transparent white */
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.9rem;
+}
+
+/* Smooth hover for all players */
+.player-list-item:hover {
+  background-color: #e6f0ff;
+  transform: translateY(-1px);
 }
 
 .player-number {
@@ -65,20 +68,7 @@
   color: #495057;
   margin-right: 15px;
   flex-shrink: 0;
-}
-
-.player-name {
-  flex-grow: 1;
-  font-size: 1rem;
-}
-
-.player-position {
-  font-size: 0.85rem;
-  color: #6c757d;
-}
-
-.player-list-item.active .player-position {
-  color: rgba(255, 255, 255, 0.8);
+  font-weight: bold;
 }
 
 .player-list-loading,
@@ -87,4 +77,27 @@
   padding: 20px 10px;
   color: #6c757d;
   font-style: italic;
+}
+
+.player-initials-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-info-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px; /* space between initials, number, name */
+}
+
+.player-name {
+  font-size: 14px;
 }

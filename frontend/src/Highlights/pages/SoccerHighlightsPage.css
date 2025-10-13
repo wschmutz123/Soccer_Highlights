@@ -1,0 +1,70 @@
+/* SoccerHighlightsPage.css */
+
+/* --- Base Layout and Reset --- */
+.highlights-page-layout {
+  /* Ensure the page component takes up the full viewport height */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stack header and main vertically */
+  font-family: Arial, sans-serif;
+  background-color: #f4f7f9; /* Light background for the whole page */
+  padding: 20px;
+}
+
+/* --- Header Styling (Top Section for TeamSelector) --- */
+.highlights-page-layout header {
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Main Content Area (PlayerList and HighlightPlayer) --- */
+.highlights-page-layout main {
+  display: flex; /* Inherited from inline style, but good to keep here */
+  flex-grow: 1; /* Allows the main content to fill the remaining vertical space */
+  gap: 20px; /* Space between the side and the main section */
+}
+
+/* --- Aside Styling (Left Section for PlayerList) --- */
+.highlights-page-layout aside {
+  width: 300px; /* Fixed width for the player list */
+  flex-shrink: 0; /* Prevents the aside from shrinking */
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  /* Optional: Make the player list scrollable if it gets too long */
+  overflow-y: auto;
+}
+
+/* --- Section Styling (Right/Main Section for HighlightPlayer) --- */
+.highlights-page-layout section {
+  flex-grow: 1; /* Takes up all remaining horizontal space */
+  background-color: #1a1a1a; /* Dark background for the video player */
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  /* Center the content vertically/horizontally if no player is selected */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+/* --- Placeholder Style (When no Player is Selected) --- */
+.highlights-page-layout section:empty:before {
+  content: "Select a player to view highlights";
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- Placeholder for the TeamSelector Component (for context) --- */
+/* You would need to add specific styling within the TeamSelector.js component */
+.team-selector-dropdown {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 250px;
+}

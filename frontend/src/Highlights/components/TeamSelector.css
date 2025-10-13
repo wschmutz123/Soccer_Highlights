@@ -1,0 +1,70 @@
+/* TeamSelector.css */
+
+.team-selector-container {
+  /* Flex layout to align the label and the dropdown horizontally */
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space between the label and the select box */
+  padding: 5px 0; /* Add slight vertical padding */
+}
+
+.team-selector-label {
+  /* Style for the "Select Team:" text */
+  font-weight: 600;
+  color: #495057; /* Darker color for good contrast */
+  font-size: 1.1rem;
+  white-space: nowrap; /* Prevent the label from wrapping */
+}
+
+.team-selector-dropdown {
+  /* Style the actual dropdown (select element) */
+  padding: 10px 35px 10px 15px; /* Extra padding on right for custom arrow */
+  font-size: 1rem;
+  line-height: 1.5;
+  border: 1px solid #ced4da; /* Light border */
+  border-radius: 6px;
+  min-width: 280px;
+  background-color: #ffffff;
+  color: #495057;
+  cursor: pointer;
+
+  /* Custom Arrow for appearance: none */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Custom background image for the dropdown arrow */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="292.4" height="292.4"><path fill="%236c757d" d="M287 79.3c-3.1-3.1-7.8-3.1-10.9 0L146.2 191.7 16.3 79.3c-3.1-3.1-7.8-3.1-10.9 0s-3.1 7.8 0 10.9l129.7 129.7c3.1 3.1 7.8 3.1 10.9 0l129.7-129.7c3.1-3.1 3.1-7.8 0-10.9z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 15px center; /* Position the arrow */
+  background-size: 10px;
+
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.team-selector-dropdown:hover {
+  border-color: #a2b8c9;
+}
+
+.team-selector-dropdown:focus {
+  /* Highlight the input when it is active */
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Styles for the loading/error states */
+.team-selector-loading,
+.team-selector-error {
+  color: #6c757d;
+  font-size: 1rem;
+  padding: 10px;
+  font-style: italic;
+}
+
+.team-selector-error {
+  color: #dc3545; /* Red for error messages */
+  font-weight: bold;
+}

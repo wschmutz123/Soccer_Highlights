@@ -1,0 +1,90 @@
+/* PlayerList.css */
+
+.player-list-container {
+  padding: 15px;
+  height: 100%; /* Ensure it fills the height of the parent aside element */
+}
+
+.player-list-title {
+  font-size: 1.25rem;
+  color: #007bff; /* Use primary color for the title */
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.player-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: calc(100vh - 200px); /* Adjust height to allow for scrolling */
+  overflow-y: auto;
+}
+
+.player-list-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 10px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.player-list-item:hover {
+  background-color: #e9ecef;
+}
+
+/* Style for the currently selected player */
+.player-list-item.active {
+  background-color: #007bff; /* Primary color background */
+  color: #ffffff; /* White text */
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+}
+
+.player-list-item.active .player-number {
+  background-color: #ffffff; /* White background for number */
+  color: #007bff; /* Primary color text for number */
+}
+
+.player-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #dee2e6;
+  color: #495057;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.player-name {
+  flex-grow: 1;
+  font-size: 1rem;
+}
+
+.player-position {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.player-list-item.active .player-position {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.player-list-loading,
+.player-list-info {
+  text-align: center;
+  padding: 20px 10px;
+  color: #6c757d;
+  font-style: italic;
+}

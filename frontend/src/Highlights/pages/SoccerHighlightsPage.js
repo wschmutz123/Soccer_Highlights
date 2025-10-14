@@ -12,6 +12,7 @@ const SoccerHighlightsPage = () => {
   const { teamId, playerId } = useParams();
 
   const playerIdRef = useRef(playerId);
+  const initialPlayerSelectedRef = useRef(false);
 
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -39,7 +40,6 @@ const SoccerHighlightsPage = () => {
    */
   const handlePlayerSelect = (player) => {
     setSelectedPlayer(player);
-
     if (selectedTeam) {
       navigate(`/${selectedTeam.id}/${player.id}`);
     }
@@ -51,11 +51,14 @@ const SoccerHighlightsPage = () => {
    * @param {Array} loadedPlayers - Array of player objects for the selected team.
    */
   const handlePlayersLoaded = (loadedPlayers) => {
-    if (playerIdRef.current) {
+    if (!initialPlayerSelectedRef.current && playerIdRef.current) {
       const player = loadedPlayers.find(
         (p) => String(p.id) === String(playerIdRef.current)
       );
-      if (player) handlePlayerSelect(player);
+      if (player) {
+        handlePlayerSelect(player);
+        initialPlayerSelectedRef.current = true; // mark as done
+      }
     }
   };
 

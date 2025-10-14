@@ -1,5 +1,5 @@
 import React from "react";
-import "./HighlightsTimeline.css";
+import "./HighlightTimeline.css";
 
 /**
  * Displays a horizontal scrollable list of video highlights as buttons.
@@ -9,7 +9,7 @@ import "./HighlightsTimeline.css";
  * @param {number} currentHighlightIndex - Index of the currently selected highlight
  * @param {function} onSelectHighlight - Callback fired when a highlight is clicked, receives the highlight index
  */
-const HighlightsTimeline = ({
+const HighlightTimeline = ({
   highlights,
   currentHighlightIndex,
   onSelectHighlight,
@@ -31,4 +31,4 @@ const HighlightsTimeline = ({
   );
 };
 
-export default HighlightsTimeline;
+export default HighlightTimeline;

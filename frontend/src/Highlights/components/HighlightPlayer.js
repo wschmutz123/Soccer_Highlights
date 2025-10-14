@@ -1,15 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery, gql } from "@apollo/client";
 import Hls from "hls.js";
-import {
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  Rewind,
-  FastForward,
-} from "lucide-react";
-import HighlightsTimeline from "./HighlightsTimeline";
+import HighlightTimeline from "./HighlightTimeline";
+import HighlightControlPanel from "./HighlightControlPanel";
 
 import "./HighlightPlayer.css";
 
@@ -52,8 +45,6 @@ const HighlightPlayer = ({ player }) => {
    * Maps the raw `teamPlayerMomentsInfo` data to a structured format
    * Resets the current highlight index to 0 to start playback from the first highlight.
    * If no highlight data exists, clears the highlights array.
-   * Dependencies:
-   * Runs whenever the data in graphQL query changes
    */
   useEffect(() => {
     if (data?.teamPlayerMomentsInfo?.length > 0) {
@@ -80,10 +71,7 @@ const HighlightPlayer = ({ player }) => {
    * Loads the video if it hasn't been loaded yet
    * Attach the video to the HLS instance, sets the video's start time, mutes the video, and autoplays it
    * If same video already loaded, simply jump to the new highlight start time
-   * Cleanup on highlight or player change by destroying HLS instance, pausing video, resetting video element
-   * Dependencies:
-   * Current Highlight: The highlight currently selected for playback
-   * Player: Selected player, reload video when switching players
+   * Cleanup HLS instance if player or URL has changed
    */
   useEffect(() => {
     const video = videoRef.current;
@@ -97,7 +85,6 @@ const HighlightPlayer = ({ player }) => {
       return;
     }
 
-    // Different video? destroy old HLS first
     if (hlsRef.current) {
       hlsRef.current.destroy();
       hlsRef.current = null;
@@ -125,7 +112,7 @@ const HighlightPlayer = ({ player }) => {
    * Handles progression of currently playing highlight video
    * Check if video has passed the end time of current highlight
    * If it has checks if it's the last highlight it pauses the video
-   * Otherwise:  Advances to next highlight
+   * Otherwise: Advances to next highlight
    */
   const handleVideoTimeUpdate = () => {
     const video = videoRef.current;
@@ -150,6 +137,7 @@ const HighlightPlayer = ({ player }) => {
     const nextIndex = currentHighlightIndex + 1;
     if (nextIndex < highlights.length) {
       setCurrentHighlightIndex(nextIndex);
+      setIsPlaying(true);
     } else {
       setIsPlaying(false);
       videoRef.current?.pause();
@@ -161,6 +149,7 @@ const HighlightPlayer = ({ player }) => {
     const prevIndex = currentHighlightIndex - 1;
     if (prevIndex >= 0) {
       setCurrentHighlightIndex(prevIndex);
+      setIsPlaying(true);
     }
   };
 
@@ -247,32 +236,25 @@ const HighlightPlayer = ({ player }) => {
             {currentHighlight.event || "Starting..."}
           </div>
         </div>
-        <div className="custom-controls">
-          <button onClick={playPreviousHighlight} title="Previous Highlight">
-            <SkipBack size={20} />
-          </button>
-          <button onClick={() => skipTime(-5)} title="Rewind 5s">
-            <Rewind size={20} />
-          </button>
-          <button
-            onClick={togglePlayPause}
-            title={isPlaying ? "Pause" : "Play"}
-          >
-            {isPlaying ? <Pause size={22} /> : <Play size={22} />}
-          </button>
-          <button onClick={() => skipTime(5)} title="Forward 5s">
-            <FastForward size={20} />
-          </button>
-          <button onClick={playNextHighlight} title="Next Highlight">
-            <SkipForward size={20} />
-          </button>
-        </div>
+        <HighlightControlPanel
+          isPlaying={isPlaying}
+          onPlayPause={togglePlayPause}
+          onNext={playNextHighlight}
+          onPrevious={playPreviousHighlight}
+          onSkip={skipTime}
+        />
       </div>
 
-      <HighlightsTimeline
+      <HighlightTimeline
         highlights={highlights}
         currentHighlightIndex={currentHighlightIndex}
-        onSelectHighlight={(index) => setCurrentHighlightIndex(index)}
+        onSelectHighlight={(index) => {
+          setCurrentHighlightIndex(index);
+          const video = videoRef.current;
+          if (video) {
+            setIsPlaying(true);
+          }
+        }}
       />
       <div>
         {videoError && (

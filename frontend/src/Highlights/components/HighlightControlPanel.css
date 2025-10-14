@@ -1,0 +1,39 @@
+/* Custom controls */
+.custom-controls {
+  position: absolute;
+  bottom: 20px; /* small margin from bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.custom-controls button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: #007bff;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.custom-controls button:hover {
+  background-color: #3399ff;
+  transform: scale(1.05);
+}
+
+.custom-controls button:active {
+  transform: scale(0.95);
+}

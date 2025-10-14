@@ -1,6 +1,5 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import SoccerHighlightsPage from "./Highlights/pages/SoccerHighlightsPage";
 
 const App = () => {
   return (

@@ -6,12 +6,11 @@ import "./PlayerList.css"; // Dedicated CSS file for the list
 const GET_TEAM_MEMBERS = gql`
   query TeamMembers($teamHash: String!) {
     teamMembers(team_hash: $teamHash) {
-      team_player_id # Use this for the unique Team Member ID
-      is_player # To ensure the member is a player, not a coach
-      jersey_number # Use this field for the number
-      # The player's name and user ID are nested within the 'user' object
+      team_player_id # Unique Team Member ID
+      is_player
+      jersey_number
       user {
-        user_id # Use this for the Player's User ID (if needed)
+        user_id
         first_name
         last_name
       }
@@ -21,9 +20,10 @@ const GET_TEAM_MEMBERS = gql`
 
 /**
  * PlayerList Component (The Left Side Panel)
- * @param {object} props - Component props
  * @param {object} props.team - The currently selected team object from the parent.
  * @param {function} props.onSelectPlayer - Callback function when a player is clicked.
+ * @param {function} props.onPlayersLoaded - Callback function when players are loaded.
+ * @param {object} props.selectedPlayer - The currently selected player object from the parent.
  */
 const PlayerList = ({
   team,
@@ -36,12 +36,14 @@ const PlayerList = ({
   // Apollo useQuery hook handles data fetching and state
   const { loading, error, data } = useQuery(GET_TEAM_MEMBERS, {
     variables: { teamHash },
-    // Skip the query if no valid teamHash is present
     skip: !teamHash,
   });
 
+  /**
+   * Memoized computation of the team's player list.
+   * Filters out non-players, maps relevant data, and sorts by jersey number and name.
+   */
   const teamPlayers = useMemo(() => {
-    console.log(data);
     const members = data?.teamMembers || [];
     return members
       .filter((m) => m.is_player)
@@ -63,6 +65,10 @@ const PlayerList = ({
       });
   }, [data]);
 
+  /**
+   * Notify parent component that the players have been loaded.
+   * Runs whenever `teamPlayers` changes.
+   */
   useEffect(() => {
     if (onPlayersLoaded) {
       onPlayersLoaded(teamPlayers); // Notify parent
@@ -82,7 +88,6 @@ const PlayerList = ({
   }
 
   if (error) {
-    // Display user-friendly error
     return (
       <div className="player-list-error">
         Error loading players: {error.message}
@@ -98,7 +103,7 @@ const PlayerList = ({
 
   return (
     <div className="player-list-container">
-      <h3>Players </h3>
+      <h3>Players</h3>
       <ul className="player-items-list">
         {teamPlayers.map((player) => {
           const initials = `${player.firstName[0] || ""}${
@@ -114,10 +119,12 @@ const PlayerList = ({
             >
               <div className="player-info-column">
                 <div className="player-initials-circle">{initials}</div>
-                {player.number && (
-                  <div className="player-number">#{player.number}</div>
-                )}
-                <div className="player-name">{player.name}</div>
+                <div className="player-name-row">
+                  {player.number && (
+                    <div className="player-number">#{player.number}</div>
+                  )}
+                  <div className="player-name">{player.name}</div>
+                </div>
               </div>
             </li>
           );

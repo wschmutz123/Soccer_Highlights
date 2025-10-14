@@ -1,18 +1,17 @@
-/* HighlightPlayer.css */
-
+/* Container */
 .highlight-player-container {
   height: 100%;
-  /* The container inherits the dark background from SoccerHighlightsPage.css section style */
   display: flex;
   flex-direction: column;
   padding: 20px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .video-wrapper {
   position: relative;
-  /* Use padding-bottom trick for a 16:9 aspect ratio */
   width: 100%;
-  padding-bottom: 56.25%; /* 9 / 16 = 0.5625 */
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
   background-color: #000;
   border-radius: 6px;
   overflow: hidden;
@@ -25,58 +24,50 @@
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Ensures the video fits within the bounds */
+  object-fit: contain;
 }
 
-/* --- Details Section --- */
-.highlight-event {
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin-bottom: 5px;
-}
-
-/* --- State Styles --- */
-.highlight-player-loading,
-.highlight-player-placeholder {
-  color: #a0a0a0;
-  text-align: center;
-  padding: 50px;
-  font-size: 1.5rem;
-  align-self: center; /* Allows these to center vertically in the flex container */
-}
-
+/* Overlay for player info */
 .player-overlay {
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: rgba(0, 0, 0, 0.6); /* semi-transparent background */
-  color: #fff;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
   padding: 8px 12px;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
-.player-initials-circle {
+.highlight-player-initials-circle {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   background-color: #007bff;
-  color: white;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: bold;
-  font-size: 16px;
 }
 
-.player-jersey {
+.highlight-player-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.highlight-player-number {
+  color: #ffffff;
   font-weight: bold;
 }
 
-.player-name {
+.highlight-player-name {
+  color: #ffffff;
   font-size: 14px;
 }
 
@@ -85,15 +76,87 @@
   opacity: 0.9;
 }
 
-.highlight-placeholder {
-  width: 100%;
-  height: 400px; /* match typical video size */
+/* Loading / Placeholder */
+.highlight-player-loading,
+.highlight-player-placeholder {
+  color: #a0a0a0;
+  text-align: center;
+  padding: 50px;
+  font-size: 1.5rem;
+  align-self: center;
+}
+
+/* Custom controls */
+.custom-controls {
+  position: absolute;
+  bottom: 20px; /* small margin from bottom */
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
-  color: #555;
-  background-color: #f0f0f0;
-  border: 2px dashed #ccc;
+  gap: 12px;
+  padding: 6px 12px;
   border-radius: 8px;
+  z-index: 10;
+}
+
+.custom-controls button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: #007bff;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.custom-controls button:hover {
+  background-color: #3399ff;
+  transform: scale(1.05);
+}
+
+.custom-controls button:active {
+  transform: scale(0.95);
+}
+
+/* Highlights finished popup */
+.highlights-finished-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.highlights-finished-popup {
+  background: #ffffff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #007bff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.highlights-finished-popup .close-popup {
+  margin-top: 12px;
+  background: #007bff;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
 }

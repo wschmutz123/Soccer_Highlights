@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useHttpClient } from "../../Shared/hooks/http-hook";
 
 import "./TeamSelector.css";
 
@@ -14,10 +13,10 @@ const TeamSelector = ({ onSelectTeam, initialTeamId, onTeamsLoaded }) => {
   const [teams, setTeams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState("");
 
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [isLoading, setIsLoading] = useState(false);
 
   const initialized = useRef(false);
-
+  /*
   const fetchTeams = useCallback(async () => {
     try {
       const responseData = await sendRequest(
@@ -48,10 +47,77 @@ const TeamSelector = ({ onSelectTeam, initialTeamId, onTeamsLoaded }) => {
       setTeams(standardizedTeams);
     } catch (err) {}
   }, [sendRequest]);
+  */
+
+  const fetchTeams = async () => {
+    try {
+      setIsLoading(true);
+
+      // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 600));
+
+      // Mock API response
+      const mockResponse = {
+        success: true,
+        result: [
+          {
+            ok: true,
+            data: {
+              type: "query",
+              data: [
+                {
+                  team_hash: "1mkaqhhw",
+                  title: "Union County Co-Ed FC",
+                  num_games: 21,
+                },
+                {
+                  team_hash: "lclk7b38",
+                  title: "SS Soccer Academy",
+                  num_games: 21,
+                },
+                {
+                  team_hash: "bng4bmzj",
+                  title: "Campton United 2015/2016/2017/2018 Girls",
+                  num_games: 18,
+                },
+                {
+                  team_hash: "4qfyh3tu",
+                  title: "Charleston Catholic Middle School Boys Soccer",
+                  num_games: 18,
+                },
+                {
+                  team_hash: "qiwcpkhb",
+                  title: "Apex Strikers",
+                  num_games: 17,
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      // Extract and standardize team data
+      const fetchedTeams = mockResponse?.result[0]?.data?.data || [];
+      const standardizedTeams = fetchedTeams
+        .map((team) => ({
+          id: team.team_hash,
+          name: team.title.trim(),
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      if (onTeamsLoaded) onTeamsLoaded();
+
+      setTeams(standardizedTeams);
+    } catch (err) {
+      console.error("Error fetching mock teams:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchTeams();
-  }, [fetchTeams]);
+  }, []);
 
   // --- 2. Initialization Logic (Runs when teams data arrives OR initialTeamId changes) ---
   useEffect(() => {
@@ -78,6 +144,12 @@ const TeamSelector = ({ onSelectTeam, initialTeamId, onTeamsLoaded }) => {
     const id = event.target.value;
     setSelectedTeamId(id);
 
+    if (!id) {
+      // User selected "Choose a Team"
+      onSelectTeam(null);
+      return;
+    }
+
     // Find the full team object and pass it up to the parent
     const teamObject = teams.find((t) => t.id === id);
 
@@ -95,30 +167,22 @@ const TeamSelector = ({ onSelectTeam, initialTeamId, onTeamsLoaded }) => {
   }
 
   return (
-    <React.Fragment>
-      <div className="team-selector-container">
-        <label htmlFor="team-select" className="team-selector-label">
-          Select Team:
-        </label>
-        <select
-          id="team-select"
-          className="team-selector-dropdown"
-          value={selectedTeamId}
-          onChange={handleTeamChange}
-        >
-          <option value="" disabled>
-            {"Choose a Team"}
-          </option>
+    <div className="team-selector-container">
+      <select
+        id="team-select"
+        className="team-selector-dropdown"
+        value={selectedTeamId}
+        onChange={handleTeamChange}
+      >
+        <option value="">Choose a Team</option>
 
-          {/* Map available teams to options */}
-          {teams.map((team) => (
-            <option key={team.id} value={team.id}>
-              {team.name}
-            </option>
-          ))}
-        </select>
-      </div>
-    </React.Fragment>
+        {teams.map((team) => (
+          <option key={team.id} value={team.id}>
+            {team.name}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
 

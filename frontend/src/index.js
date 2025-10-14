@@ -19,7 +19,6 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
         // The main page route, handles the initial / and the deep links
         path: "/:teamId?/:playerId?",
         element: <SoccerHighlightsPage />,

@@ -30,15 +30,16 @@ const GET_PLAYER_HIGHLIGHTS = gql`
  * @param {object} props.player - The currently selected player object.
  */
 const HighlightPlayer = ({ player }) => {
-  // const teamPlayerId = player?.id ? parseInt(player.id, 10) : null;
-  const teamPlayerId = 7287606;
-  const videoRef = useRef(null);
+  const teamPlayerId = player?.id ? parseInt(player.id, 10) : null;
 
-  const hlsRef = useRef(null); // stores Hls instance
+  const videoRef = useRef(null);
+  const hlsRef = useRef(null);
   const currentVideoUrlRef = useRef("");
+
   const [highlights, setHighlights] = useState([]);
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [videoError, setVideoError] = useState(false);
 
   const { loading, error, data } = useQuery(GET_PLAYER_HIGHLIGHTS, {
     variables: { teamPlayerId: teamPlayerId },
@@ -65,8 +66,6 @@ const HighlightPlayer = ({ player }) => {
       }));
       setHighlights(mapped);
       setCurrentHighlightIndex(0); // start from first highlight
-
-      console.log(mapped);
     } else {
       setHighlights([]);
     }
@@ -91,15 +90,17 @@ const HighlightPlayer = ({ player }) => {
 
     const videoUrl = currentHighlight.videoUrl;
 
-    // Only create a new Hls instance if URL changed
+    setVideoError(false);
+
+    const handleVideoError = () => setVideoError(true);
+    video.addEventListener("error", handleVideoError);
+
     if (!hlsRef.current || currentVideoUrlRef.current !== videoUrl) {
-      // Cleanup old instance
       if (hlsRef.current) {
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
 
-      // Create new Hls instance
       const hls = new Hls();
       hlsRef.current = hls;
       currentVideoUrlRef.current = videoUrl;
@@ -116,15 +117,19 @@ const HighlightPlayer = ({ player }) => {
           .then(() => setIsPlaying(true))
           .catch(() => {});
       });
+
+      hls.on(Hls.Events.ERROR, (_, data) => {
+        if (data.fatal) setVideoError(true);
+      });
     } else {
-      // Same video, just jump to new highlight start
       video.currentTime = currentHighlight.start || 0;
-      video.play().catch(() => {});
+      video.play().catch(() => setVideoError(true));
       setIsPlaying(true);
     }
 
     // Cleanup when component unmounts
     return () => {
+      video.removeEventListener("error", handleVideoError);
       if (hlsRef.current) {
         hlsRef.current.destroy();
         hlsRef.current = null;
@@ -151,10 +156,8 @@ const HighlightPlayer = ({ player }) => {
 
     if (video.currentTime >= currentHighlight.end) {
       if (currentHighlightIndex < highlights.length - 1) {
-        // Move to next highlight
         setCurrentHighlightIndex(currentHighlightIndex + 1);
       } else {
-        // Last highlight finished
         video.pause();
         video.currentTime = currentHighlight.end;
         setIsPlaying(false);
@@ -176,7 +179,7 @@ const HighlightPlayer = ({ player }) => {
     }
   };
 
-  //Set playback to the previous highlight in the list.
+  // Set playback to the previous highlight in the list.
   const playPreviousHighlight = () => {
     const prevIndex = currentHighlightIndex - 1;
     if (prevIndex >= 0) {
@@ -225,8 +228,8 @@ const HighlightPlayer = ({ player }) => {
 
   if (error) {
     return (
-      <div className="highlight-player-error">
-        Error loading highlights: {error.message}
+      <div className="highlight-player-placeholder">
+        No highlights available for {player.name}.
       </div>
     );
   }
@@ -294,6 +297,19 @@ const HighlightPlayer = ({ player }) => {
         currentHighlightIndex={currentHighlightIndex}
         onSelectHighlight={(index) => setCurrentHighlightIndex(index)}
       />
+      <div>
+        {videoError && (
+          <div className="video-error-overlay">
+            ⚠️ Couldn't load video
+            <button
+              className="video-error-close"
+              onClick={() => setVideoError(false)}
+            >
+              ✖
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

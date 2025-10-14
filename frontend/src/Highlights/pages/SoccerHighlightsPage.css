@@ -19,8 +19,6 @@
   width: 30%;
   min-width: 300px; /* optional: ensures it never gets too small */
   flex-shrink: 0; /* prevents it from shrinking */
-  border-right: 1px solid #ddd;
-  background-color: #fff;
   overflow-y: auto;
 }
 

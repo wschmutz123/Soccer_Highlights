@@ -23,6 +23,8 @@ const SoccerHighlightsPage = () => {
   const handleTeamSelect = (team) => {
     setSelectedTeam(team);
 
+    console.log(team);
+
     if (!team) {
       setSelectedPlayer(null);
       navigate(`/`);

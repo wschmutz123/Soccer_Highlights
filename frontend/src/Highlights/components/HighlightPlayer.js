@@ -34,6 +34,9 @@ const HighlightPlayer = ({ player }) => {
 
   const videoRef = useRef(null);
 
+  const hlsRef = useRef(null);
+  const currentVideoUrlRef = useRef(null);
+
   const [highlights, setHighlights] = useState([]);
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -84,56 +87,39 @@ const HighlightPlayer = ({ player }) => {
    */
   useEffect(() => {
     const video = videoRef.current;
-    let hlsInstance = null;
-
-    if (!video || !currentHighlight) {
-      if (video) video.src = "";
-      return;
-    }
+    if (!video || !currentHighlight) return;
 
     const videoUrl = currentHighlight.videoUrl;
 
-    if (Hls.isSupported()) {
-      hlsInstance = new Hls();
-      hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-        if (data.fatal) {
-          console.error(`[HLS Fatal Error] ${data.type}: ${data.details}`);
-        }
-      });
-
-      hlsInstance.loadSource(videoUrl);
-      hlsInstance.attachMedia(video);
-      hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.currentTime = currentHighlight.start;
-        video.muted = true;
-        video
-          .play()
-          .catch((err) =>
-            console.warn("Autoplay blocked, waiting for user interaction.", err)
-          );
-      });
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = videoUrl;
-      video.onloadedmetadata = () => {
-        video.currentTime = currentHighlight.start;
-        video
-          .play()
-          .catch((err) => console.warn("Native playback blocked.", err));
-      };
-    } else {
-      console.error("No HLS support found.");
-      video.src = "";
+    if (hlsRef.current && currentVideoUrlRef.current === videoUrl) {
+      video.currentTime = currentHighlight.start;
+      video.play().catch(() => {});
+      return;
     }
 
+    // Different video? destroy old HLS first
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+
+    currentVideoUrlRef.current = videoUrl;
+
+    const hls = new Hls();
+    hlsRef.current = hls;
+    hls.loadSource(videoUrl);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.currentTime = currentHighlight.start;
+      video.muted = true;
+      video.play().catch(() => {});
+    });
+
     return () => {
-      if (hlsInstance) hlsInstance.destroy();
-      if (video) {
-        video.pause();
-        video.removeAttribute("src");
-        video.load();
-      }
+      // Do not destroy here unless video URL changes
+      video.pause();
     };
-  }, [currentHighlight]);
+  }, [currentHighlight, player]);
 
   /**
    * Handles progression of currently playing highlight video

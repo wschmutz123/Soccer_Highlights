@@ -1,8 +1,9 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TeamSelector from "../components/TeamSelector";
 import PlayerList from "../components/PlayerList";
 import HighlightPlayer from "../components/HighlightPlayer";
+import { useTeams } from "../context/TeamsContext";
 
 import "./SoccerHighlightsPage.css";
 
@@ -14,7 +15,7 @@ const SoccerHighlightsPage = () => {
 
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [teamsLoaded, setTeamsLoaded] = useState(false);
+  const { teams } = useTeams();
 
   /**
    * Handles selection of a team from the dropdown or list.
@@ -22,8 +23,6 @@ const SoccerHighlightsPage = () => {
    */
   const handleTeamSelect = (team) => {
     setSelectedTeam(team);
-
-    console.log(team);
 
     if (!team) {
       setSelectedPlayer(null);
@@ -60,20 +59,10 @@ const SoccerHighlightsPage = () => {
     }
   };
 
-  /**
-   * Callback when teams have finished loading.
-   * Sets a flag in state to indicate teams are ready.
-   */
-  const handleTeamsLoaded = useCallback(() => setTeamsLoaded(true), []);
-
   return (
     <div className="highlights-page-layout">
       <header>
-        <TeamSelector
-          onSelectTeam={handleTeamSelect}
-          initialTeamId={teamId} // Prop to help TeamSelector initialize
-          onTeamsLoaded={handleTeamsLoaded}
-        />
+        <TeamSelector onSelectTeam={handleTeamSelect} initialTeamId={teamId} />
       </header>
       <main className="main-layout">
         <aside className="sidebar">
@@ -87,7 +76,7 @@ const SoccerHighlightsPage = () => {
           )}
         </aside>
         <section className="main-content">
-          {teamsLoaded && <HighlightPlayer player={selectedPlayer} />}
+          {teams && <HighlightPlayer player={selectedPlayer} />}
         </section>
       </main>
     </div>

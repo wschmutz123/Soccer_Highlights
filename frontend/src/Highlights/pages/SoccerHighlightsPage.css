@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column; /* Stack header and main vertically */
   font-family: Arial, sans-serif;
-  background-color: #f4f7f9; /* Light background for the whole page */
+  background-color: #f4f7f9;
   padding: 20px;
 }
 
@@ -17,7 +17,7 @@
 
 .sidebar {
   width: 30%;
-  min-width: 300px; /* optional: ensures it never gets too small */
+  min-width: 300px; /* ensures it never gets too small */
   flex-shrink: 0; /* prevents it from shrinking */
   overflow-y: auto;
 }

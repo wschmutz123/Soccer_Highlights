@@ -20,10 +20,10 @@ const GET_TEAM_MEMBERS = gql`
 
 /**
  * PlayerList Component (The Left Side Panel)
- * @param {object} props.team - The currently selected team object from the parent.
+ * @param {object} props.team - The currently selected team object.
  * @param {function} props.onSelectPlayer - Callback function when a player is clicked.
  * @param {function} props.onPlayersLoaded - Callback function when players are loaded.
- * @param {object} props.selectedPlayer - The currently selected player object from the parent.
+ * @param {object} props.selectedPlayer - The currently selected player object.
  */
 const PlayerList = ({
   team,
@@ -33,7 +33,6 @@ const PlayerList = ({
 }) => {
   const teamHash = team?.id || "";
 
-  // Apollo useQuery hook handles data fetching and state
   const { loading, error, data } = useQuery(GET_TEAM_MEMBERS, {
     variables: { teamHash },
     skip: !teamHash,
@@ -67,11 +66,10 @@ const PlayerList = ({
 
   /**
    * Notify parent component that the players have been loaded.
-   * Runs whenever `teamPlayers` changes.
    */
   useEffect(() => {
     if (onPlayersLoaded) {
-      onPlayersLoaded(teamPlayers); // Notify parent
+      onPlayersLoaded(teamPlayers);
     }
   }, [teamPlayers, onPlayersLoaded]);
 

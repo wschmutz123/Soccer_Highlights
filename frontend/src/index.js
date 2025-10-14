@@ -6,6 +6,7 @@ import "./index.css";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import App from "./App";
 import SoccerHighlightsPage from "./Highlights/pages/SoccerHighlightsPage";
+import { TeamsProvider } from "./Highlights/context/TeamsContext";
 
 // 1. Create the Apollo Client instance
 const client = new ApolloClient({
@@ -31,6 +32,8 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ApolloProvider client={client}>
-    <RouterProvider router={router} />
+    <TeamsProvider>
+      <RouterProvider router={router} />
+    </TeamsProvider>
   </ApolloProvider>
 );

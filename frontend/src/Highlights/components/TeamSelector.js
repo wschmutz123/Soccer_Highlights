@@ -1,73 +1,30 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTeams } from "../context/TeamsContext";
 
 import "./TeamSelector.css";
-
-const API_URL = "https://lapi.traceup.com/upload-dev/data/db-ro/query";
 
 /**
  * TeamSelector Component
  * @param {object} props - Component props
  * @param {function} props.onSelectTeam - Callback function when a team is selected
+ * @param {string} props.initialTeamId - The teamId in the url
  */
-const TeamSelector = ({ onSelectTeam, initialTeamId, onTeamsLoaded }) => {
+const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
   const navigate = useNavigate();
 
-  const [teams, setTeams] = useState([]);
-  const [selectedTeamId, setSelectedTeamId] = useState("");
+  const { teams, isLoading } = useTeams();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedTeamId, setSelectedTeamId] = useState("");
 
   const initialized = useRef(false);
 
-  /**
-   * Fetches the list of teams from the API, standardizes their format,
-   * sorts them alphabetically, updates state, and notifies the parent
-   * when teams have loaded.
-   */
-  useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        setIsLoading(true);
-
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: [
-              {
-                type: "query",
-                table: "test_top_teams",
-                data: {},
-              },
-            ],
-          }),
-        });
-
-        if (!response.ok)
-          throw new Error(`HTTP error! Status: ${response.status}`);
-
-        const data = await response.json();
-
-        const fetchedTeams = data?.result?.[0]?.data?.data || [];
-        const standardizedTeams = fetchedTeams
-          .map((team) => ({
-            id: team.team_hash,
-            name: team.title.trim(),
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name));
-
-        if (onTeamsLoaded) onTeamsLoaded();
-        setTeams(standardizedTeams);
-      } catch (err) {
-        console.error("Error fetching teams:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTeams();
-  }, [onTeamsLoaded]);
+  const safeNavigate = useCallback(
+    (path) => {
+      navigate(path);
+    },
+    [navigate]
+  );
 
   /**
    * Initializes the selected team when teams are loaded.
@@ -76,7 +33,6 @@ const TeamSelector = ({ onSelectTeam, initialTeamId, onTeamsLoaded }) => {
    */
   useEffect(() => {
     if (teams.length === 0 || initialized.current) return;
-
     let initialTeam = null;
     if (initialTeamId) {
       initialTeam = teams.find((t) => t.id === initialTeamId);
@@ -87,11 +43,11 @@ const TeamSelector = ({ onSelectTeam, initialTeamId, onTeamsLoaded }) => {
       onSelectTeam(initialTeam); // notify parent
     } else {
       setSelectedTeamId(""); // shows "Choose a Team"
-      navigate("/");
+      safeNavigate("/");
     }
 
     initialized.current = true;
-  }, [teams, initialTeamId, onSelectTeam, navigate]);
+  }, [teams, initialTeamId, onSelectTeam, safeNavigate]);
 
   // 2. Handle dropdown change
   const handleTeamChange = (event) => {

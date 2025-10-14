@@ -33,8 +33,6 @@ const HighlightPlayer = ({ player }) => {
   const teamPlayerId = player?.id ? parseInt(player.id, 10) : null;
 
   const videoRef = useRef(null);
-  const hlsRef = useRef(null);
-  const currentVideoUrlRef = useRef("");
 
   const [highlights, setHighlights] = useState([]);
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0);
@@ -86,63 +84,56 @@ const HighlightPlayer = ({ player }) => {
    */
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !currentHighlight) return;
+    let hlsInstance = null;
+
+    if (!video || !currentHighlight) {
+      if (video) video.src = "";
+      return;
+    }
 
     const videoUrl = currentHighlight.videoUrl;
 
-    setVideoError(false);
+    if (Hls.isSupported()) {
+      hlsInstance = new Hls();
+      hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          console.error(`[HLS Fatal Error] ${data.type}: ${data.details}`);
+        }
+      });
 
-    const handleVideoError = () => setVideoError(true);
-    video.addEventListener("error", handleVideoError);
-
-    if (!hlsRef.current || currentVideoUrlRef.current !== videoUrl) {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-
-      const hls = new Hls();
-      hlsRef.current = hls;
-      currentVideoUrlRef.current = videoUrl;
-
-      hls.loadSource(videoUrl);
-      hls.attachMedia(video);
-
-      // Need to wait for the manifest to be parsed
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.currentTime = currentHighlight.start || 0;
+      hlsInstance.loadSource(videoUrl);
+      hlsInstance.attachMedia(video);
+      hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.currentTime = currentHighlight.start;
         video.muted = true;
         video
           .play()
-          .then(() => setIsPlaying(true))
-          .catch(() => {});
+          .catch((err) =>
+            console.warn("Autoplay blocked, waiting for user interaction.", err)
+          );
       });
-
-      hls.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) setVideoError(true);
-      });
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = videoUrl;
+      video.onloadedmetadata = () => {
+        video.currentTime = currentHighlight.start;
+        video
+          .play()
+          .catch((err) => console.warn("Native playback blocked.", err));
+      };
     } else {
-      video.currentTime = currentHighlight.start || 0;
-      video.play().catch(() => setVideoError(true));
-      setIsPlaying(true);
+      console.error("No HLS support found.");
+      video.src = "";
     }
 
-    // Cleanup when component unmounts
     return () => {
-      video.removeEventListener("error", handleVideoError);
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-        currentVideoUrlRef.current = "";
-      }
-
+      if (hlsInstance) hlsInstance.destroy();
       if (video) {
         video.pause();
         video.removeAttribute("src");
         video.load();
       }
     };
-  }, [currentHighlight, player]);
+  }, [currentHighlight]);
 
   /**
    * Handles progression of currently playing highlight video
@@ -187,7 +178,7 @@ const HighlightPlayer = ({ player }) => {
     }
   };
 
-  // Moves `seconds` in the video
+  // Handles moving `seconds` in the video
   const skipTime = (seconds) => {
     const video = videoRef.current;
     if (video) {

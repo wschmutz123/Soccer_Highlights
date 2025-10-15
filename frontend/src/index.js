@@ -5,8 +5,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import App from "./App";
-import SoccerHighlightsPage from "./Highlights/pages/SoccerHighlightsPage";
-import { TeamsProvider } from "./Highlights/context/TeamsContext";
+import SoccerHighlightsPage from "./highlights/pages/SoccerHighlightsPage";
+import { TeamsProvider } from "./highlights/context/TeamsContext";
 
 // 1. Create the Apollo Client instance
 const client = new ApolloClient({

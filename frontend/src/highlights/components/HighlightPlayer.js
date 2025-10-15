@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery, gql } from "@apollo/client";
-import Hls from "hls.js";
 import HighlightTimeline from "./HighlightTimeline";
 import HighlightControlPanel from "./HighlightControlPanel";
+import HlsPlayer from "react-hls-player";
 
 import "./HighlightPlayer.css";
 
@@ -26,13 +26,12 @@ const HighlightPlayer = ({ player }) => {
   const teamPlayerId = player?.id ? parseInt(player.id, 10) : null;
 
   const videoRef = useRef(null);
-  const hlsRef = useRef(null);
-  const currentVideoUrlRef = useRef(null);
 
   const [highlights, setHighlights] = useState([]);
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [videoError, setVideoError] = useState(false);
+  const [highlightLoaded, setHighlightLoaded] = useState(false);
 
   const { loading, error, data } = useQuery(GET_PLAYER_HIGHLIGHTS, {
     variables: { teamPlayerId: teamPlayerId },
@@ -65,65 +64,28 @@ const HighlightPlayer = ({ player }) => {
   const currentHighlight = highlights[currentHighlightIndex];
 
   /**
-   * Handles video playback for the current highlight
-   * Resonsibilities:
-   * Loads the video if it hasn't been loaded yet
-   * Attach the video to the HLS instance, sets the video's start time, mutes the video, handles errors and autoplays it
-   * If same video already loaded, simply jump to the new highlight start time
-   * Cleanup HLS instance if player or URL has changed
+   * Sets the video playback to the current highlight's start time
+   * and starts playback if `isPlaying` is true.
+   * Only runs once per highlight using the `highlightLoaded` flag.
    */
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !currentHighlight) return;
-
-    const videoUrl = currentHighlight.videoUrl;
-
-    setVideoError(false);
-
-    const handleVideoError = () => setVideoError(true);
-    video.addEventListener("error", handleVideoError);
-
-    if (hlsRef.current && currentVideoUrlRef.current === videoUrl) {
-      video.currentTime = currentHighlight.start;
-      setIsPlaying(true);
-      video.play().catch(() => setVideoError(true));
-      return;
+    if (video && currentHighlight && !highlightLoaded) {
+      video.currentTime = currentHighlight.start; // only set once per highlight
+      if (isPlaying) video.play().catch(() => setVideoError(true));
+      setHighlightLoaded(true);
     }
-
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-      hlsRef.current = null;
-    }
-
-    currentVideoUrlRef.current = videoUrl;
-
-    const hls = new Hls();
-    hlsRef.current = hls;
-    hls.loadSource(videoUrl);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      video.currentTime = currentHighlight.start;
-      video.muted = true;
-      video.play().catch(() => {});
-      setIsPlaying(true);
-    });
-
-    hls.on(Hls.Events.ERROR, (_, data) => {
-      if (data.fatal) setVideoError(true);
-    });
-
-    return () => {
-      video.pause();
-      video.removeEventListener("error", handleVideoError);
-    };
-  }, [currentHighlight, player]);
+  }, [currentHighlight, highlightLoaded, isPlaying]);
 
   /**
-   * Handles progression of currently playing highlight video
-   * Check if video has passed the end time of current highlight
-   * If it has checks if it's the last highlight it pauses the video
-   * Otherwise: Advances to next highlight
+   * Resets the highlightLoaded flag whenever a new highlight
+   * is selected, so the first effect knows to jump to start.
    */
+  useEffect(() => {
+    setHighlightLoaded(false);
+    setIsPlaying(true); // autoplay new highlight
+  }, [currentHighlight]);
+
   const handleVideoTimeUpdate = () => {
     const video = videoRef.current;
     if (!video || !currentHighlight) return;
@@ -221,14 +183,23 @@ const HighlightPlayer = ({ player }) => {
   return (
     <div className="highlight-player-container">
       <div className="video-wrapper">
-        <video
-          ref={videoRef}
+        <HlsPlayer
           className="highlight-video-player"
+          playerRef={videoRef}
+          src={currentHighlight.videoUrl}
           controls={false}
+          muted={true}
+          onLoadedMetadata={() => {
+            if (!highlightLoaded && videoRef.current && currentHighlight) {
+              videoRef.current.currentTime = currentHighlight.start;
+              setHighlightLoaded(true);
+              if (isPlaying)
+                videoRef.current.play().catch(() => setVideoError(true));
+            }
+          }}
+          onError={() => setVideoError(true)}
           onTimeUpdate={handleVideoTimeUpdate}
-        >
-          Your browser does not support the video tag.
-        </video>
+        />
 
         <div className="player-overlay">
           <div className="highlight-player-initials-circle">

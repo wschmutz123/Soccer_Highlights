@@ -3,11 +3,12 @@
 }
 
 .video-wrapper {
+  width: 100%;
+  aspect-ratio: 16/9; /* cleaner than padding-bottom hack */
   position: relative;
-  padding-bottom: 56.25%;
-  background-color: #000;
   border-radius: 6px;
   overflow: hidden;
+  background-color: #000;
   margin-bottom: 20px;
 }
 

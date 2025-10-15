@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTeams } from "../context/TeamsContext";
+import Select from "react-select";
 
 import "./TeamSelector.css";
 
@@ -50,8 +51,7 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
   }, [teams, initialTeamId, onSelectTeam, safeNavigate]);
 
   // Handle dropdown change
-  const handleTeamChange = (event) => {
-    const id = event.target.value;
+  const handleTeamChange = (id) => {
     setSelectedTeamId(id);
 
     if (!id) {
@@ -67,6 +67,11 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
     }
   };
 
+  const teamOptions = teams.map((team) => ({
+    value: team.id,
+    label: team.name,
+  }));
+
   if (isLoading) {
     return <div className="team-selector-loading">Loading teams...</div>;
   }
@@ -77,20 +82,15 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
 
   return (
     <div className="team-selector-container">
-      <select
-        id="team-select"
-        className="team-selector-dropdown"
-        value={selectedTeamId}
-        onChange={handleTeamChange}
-      >
-        <option value="">Choose a Team</option>
-
-        {teams.map((team) => (
-          <option key={team.id} value={team.id}>
-            {team.name}
-          </option>
-        ))}
-      </select>
+      <Select
+        options={teamOptions}
+        // React Select expects the *object* for the current value
+        value={teamOptions.find((opt) => opt.value === selectedTeamId) || null}
+        onChange={(selectedOption) => handleTeamChange(selectedOption?.value)}
+        placeholder="Choose a Team"
+        isClearable
+        className="team-selector"
+      />
     </div>
   );
 };

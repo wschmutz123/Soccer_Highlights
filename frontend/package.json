@@ -11,6 +11,7 @@
     "react-hls-player": "^3.0.7",
     "react-router-dom": "^7.9.4",
     "react-scripts": "5.0.1",
+    "react-select": "^5.10.2",
     "rxjs": "^7.8.2"
   },
   "scripts": {

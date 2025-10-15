@@ -19,31 +19,32 @@ const SoccerHighlightsPage = () => {
   const { teams } = useTeams();
 
   /**
-   * Handles selection of a team from the dropdown or list.
-   * @param {object|null} team - The team object selected, or null if "Choose a Team" is clicked.
+   * Updates the selected team and player, then navigates to the appropriate route.
+   * - Navigates to `/` if no team is selected.
+   * - Navigates to `/{teamId}` if only a team is selected.
+   * - Navigates to `/{teamId}/{playerId}` if both are selected.
+   * @param {object|null} [team=selectedTeam] - The selected team object, or null to reset.
+   * @param {object|null} [player=selectedPlayer] - The selected player object, or null if none.
    */
-  const handleTeamSelect = (team) => {
+  const updateSelection = (team = selectedTeam, player = selectedPlayer) => {
     setSelectedTeam(team);
+    setSelectedPlayer(player);
 
     if (!team) {
-      setSelectedPlayer(null);
       navigate(`/`);
       return;
     }
 
-    navigate(`/${team.id}`);
+    if (!player) {
+      navigate(`/${team.id}`);
+      return;
+    }
+
+    navigate(`/${team.id}/${player.id}`);
   };
 
-  /**
-   * Handles selection of a player from the player list.
-   * @param {object} player - The player object that was clicked.
-   */
-  const handlePlayerSelect = (player) => {
-    setSelectedPlayer(player);
-    if (selectedTeam) {
-      navigate(`/${selectedTeam.id}/${player.id}`);
-    }
-  };
+  const handleTeamSelect = (team) => updateSelection(team, null);
+  const handlePlayerSelect = (player) => updateSelection(selectedTeam, player);
 
   /**
    * Callback when players for a team have loaded.

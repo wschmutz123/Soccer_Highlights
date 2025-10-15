@@ -13,29 +13,11 @@
   border: 1px solid #ced4da;
   border-radius: 12px; /* modern rounded corners */
   min-width: 280px;
-  background-color: #ffffff;
-  color: #495057;
   cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  position: relative;
-  transition: all 0.25s ease-in-out;
-
-  /* CSS arrow */
-  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="292.4" height="292.4"><path fill="%236c757d" d="M287 79.3c-3.1-3.1-7.8-3.1-10.9 0L146.2 191.7 16.3 79.3c-3.1-3.1-7.8-3.1-10.9 0s-3.1 7.8 0 10.9l129.7 129.7c3.1 3.1 7.8 3.1 10.9 0l129.7-129.7c3.1-3.1 3.1-7.8 0-10.9z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 10px;
-}
-
-.team-selector-dropdown:hover {
-  border-color: #a2b8c9;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .team-selector-dropdown:focus {
-  border-color: #007bff;
+  border-color: #e6f0ff;
   outline: none;
   box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
 }
@@ -45,7 +27,6 @@
   font-size: 1rem;
   padding: 10px;
   font-style: italic;
-  color: #6c757d;
 }
 
 .team-selector-error {

@@ -7,7 +7,7 @@ const TeamsContext = createContext();
 
 /**
  * Custom hook to access the Teams context
- * @returns {Object} - Contains teams array, isLoading boolean, and fetchTeams function
+ * @returns {Object} - Contains teams array, and isLoading boolean
  */
 export const useTeams = () => useContext(TeamsContext);
 
@@ -55,7 +55,7 @@ export const TeamsProvider = ({ children }) => {
   }, []);
 
   return (
-    <TeamsContext.Provider value={{ teams, isLoading, fetchTeams }}>
+    <TeamsContext.Provider value={{ teams, isLoading }}>
       {children}
     </TeamsContext.Provider>
   );

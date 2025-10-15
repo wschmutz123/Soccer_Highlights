@@ -49,7 +49,7 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
     initialized.current = true;
   }, [teams, initialTeamId, onSelectTeam, safeNavigate]);
 
-  // 2. Handle dropdown change
+  // Handle dropdown change
   const handleTeamChange = (event) => {
     const id = event.target.value;
     setSelectedTeamId(id);
@@ -60,7 +60,6 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
       return;
     }
 
-    // Find the full team object and pass it up to the parent
     const teamObject = teams.find((t) => t.id === id);
 
     if (teamObject) {

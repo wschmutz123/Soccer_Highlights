@@ -24,7 +24,7 @@ const HighlightTimeline = ({
           }`}
           onClick={() => onSelectHighlight(index)}
         >
-          {h.event}
+          {h.event} ({h.duration.toFixed(2)}s)
         </button>
       ))}
     </div>

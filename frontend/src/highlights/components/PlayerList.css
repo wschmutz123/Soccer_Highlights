@@ -1,67 +1,55 @@
 /* Container */
 .player-list-container {
-  padding: 20px;
-  height: 100%;
-  background-color: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* Player list */
 .player-items-list {
-  list-style: none;
   padding: 0;
   margin: 0;
   max-height: calc(100vh - 180px);
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* List item */
 .player-list-item {
   display: flex;
-  flex-direction: column; /* Stack initials above name */
-  align-items: center; /* Center horizontally */
+  flex-direction: column;
   padding: 12px 16px;
   cursor: pointer;
-  border-radius: 12px;
+  border: 2px solid #ffffff;
+  border-radius: 20px;
   background-color: #ffffff;
-  transition: all 0.25s ease-in-out;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  text-align: center;
 }
 
 .player-list-item:hover {
   background-color: #e6f0ff;
   transform: translateY(-2px);
+  transform: scale(1.03);
 }
 
 /* Active player */
 .player-list-item.active {
-  background: linear-gradient(180deg, #4a90e2, #357ab7);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.2);
-  transform: scale(1.03);
+  background-color: #0d6efd;
+  border-radius: 20px;
 }
 
 /* Active initials */
 .player-list-item.active .player-initials-circle {
   background-color: #ffffff;
-  color: #357ab7;
-  border: 2px solid #ffffff;
+  color: #0d6efd;
 }
 
 .player-info-column {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px; /* space between initials, number, name */
+  gap: 4px;
 }
 
 /* Player initials */
@@ -69,7 +57,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #0d6efd;
   color: #ffffff;
   font-weight: bold;
   font-size: 16px;
@@ -78,27 +66,17 @@
   align-items: center;
 }
 
-/* Name + number */
 .player-name-row {
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-/* Player number */
-.player-number {
-  font-size: 0.95rem;
-  color: #495057;
-}
-
-/* Player name */
-.player-name {
-  font-size: 15px;
   font-weight: 500;
-  color: #212529;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  font-size: 15px;
+}
+
+/* Active name */
+.player-list-item.active .player-name-row {
+  color: #ffffff;
 }
 
 /* Loading/info text */

@@ -58,9 +58,7 @@ const PlayerList = ({
         const numA = Number(a.number) || 0;
         const numB = Number(b.number) || 0;
         if (numA !== numB) return numA - numB;
-        if (a.firstName !== b.firstName)
-          return a.firstName.localeCompare(b.firstName);
-        return a.lastName.localeCompare(b.lastName);
+        return a.name.localeCompare(b.name);
       });
   }, [data]);
 
@@ -68,7 +66,7 @@ const PlayerList = ({
    * Notify parent component that the players have been loaded.
    */
   useEffect(() => {
-    if (onPlayersLoaded) {
+    if (teamPlayers?.length && onPlayersLoaded) {
       onPlayersLoaded(teamPlayers);
     }
   }, [teamPlayers, onPlayersLoaded]);
@@ -118,10 +116,8 @@ const PlayerList = ({
               <div className="player-info-column">
                 <div className="player-initials-circle">{initials}</div>
                 <div className="player-name-row">
-                  {player.number && (
-                    <div className="player-number">#{player.number}</div>
-                  )}
-                  <div className="player-name">{player.name}</div>
+                  {player.number && <div>#{player.number}</div>}
+                  <div>{player.name}</div>
                 </div>
               </div>
             </li>

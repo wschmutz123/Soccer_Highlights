@@ -1,10 +1,8 @@
 /* Top-level container */
 .highlights-page-layout {
-  /* Ensure the page component takes up the full viewport height */
   min-height: 100vh;
   display: flex;
-  flex-direction: column; /* Stack header and main vertically */
-  font-family: Arial, sans-serif;
+  flex-direction: column;
   background-color: #f4f7f9;
   padding: 20px;
 }
@@ -12,7 +10,6 @@
 .main-layout {
   display: flex;
   width: 100%;
-  height: 100%;
 }
 
 .sidebar {

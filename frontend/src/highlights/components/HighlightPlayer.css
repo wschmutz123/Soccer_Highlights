@@ -1,17 +1,10 @@
-/* Container */
 .highlight-player-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
   padding: 20px;
-  max-width: 100%;
-  overflow: hidden;
 }
 
 .video-wrapper {
   position: relative;
-  width: 100%;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  padding-bottom: 56.25%;
   background-color: #000;
   border-radius: 6px;
   overflow: hidden;
@@ -24,7 +17,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
 }
 
 /* Overlay for player info */
@@ -39,14 +31,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .highlight-player-initials-circle {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #0d6efd;
   color: #ffffff;
   font-weight: bold;
   font-size: 16px;
@@ -58,22 +50,13 @@
 .highlight-player-name-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.highlight-player-number {
-  color: #ffffff;
-  font-weight: bold;
-}
-
-.highlight-player-name {
+  gap: 4px;
   color: #ffffff;
   font-size: 14px;
 }
 
 .highlight-event {
   font-size: 12px;
-  opacity: 0.9;
 }
 
 /* Loading / Placeholder */

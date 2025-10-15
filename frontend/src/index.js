@@ -16,7 +16,6 @@ const client = new ApolloClient({
 
 const router = createBrowserRouter([
   {
-    // App can serve as a layout wrapper if needed, or you can go straight to the page
     element: <App />,
     children: [
       {
@@ -24,7 +23,7 @@ const router = createBrowserRouter([
         path: "/:teamId?/:playerId?",
         element: <SoccerHighlightsPage />,
       },
-      // You could add other pages here later
+      // Add other pages
     ],
   },
 ]);

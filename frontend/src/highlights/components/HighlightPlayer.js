@@ -26,7 +26,6 @@ const HighlightPlayer = ({ player }) => {
   const teamPlayerId = player?.id ? parseInt(player.id, 10) : null;
 
   const videoRef = useRef(null);
-
   const hlsRef = useRef(null);
   const currentVideoUrlRef = useRef(null);
 
@@ -69,7 +68,7 @@ const HighlightPlayer = ({ player }) => {
    * Handles video playback for the current highlight
    * Resonsibilities:
    * Loads the video if it hasn't been loaded yet
-   * Attach the video to the HLS instance, sets the video's start time, mutes the video, and autoplays it
+   * Attach the video to the HLS instance, sets the video's start time, mutes the video, handles errors and autoplays it
    * If same video already loaded, simply jump to the new highlight start time
    * Cleanup HLS instance if player or URL has changed
    */
@@ -79,9 +78,15 @@ const HighlightPlayer = ({ player }) => {
 
     const videoUrl = currentHighlight.videoUrl;
 
+    setVideoError(false);
+
+    const handleVideoError = () => setVideoError(true);
+    video.addEventListener("error", handleVideoError);
+
     if (hlsRef.current && currentVideoUrlRef.current === videoUrl) {
       video.currentTime = currentHighlight.start;
-      video.play().catch(() => {});
+      setIsPlaying(true);
+      video.play().catch(() => setVideoError(true));
       return;
     }
 
@@ -100,11 +105,16 @@ const HighlightPlayer = ({ player }) => {
       video.currentTime = currentHighlight.start;
       video.muted = true;
       video.play().catch(() => {});
+      setIsPlaying(true);
+    });
+
+    hls.on(Hls.Events.ERROR, (_, data) => {
+      if (data.fatal) setVideoError(true);
     });
 
     return () => {
-      // Do not destroy here unless video URL changes
       video.pause();
+      video.removeEventListener("error", handleVideoError);
     };
   }, [currentHighlight, player]);
 
@@ -220,21 +230,16 @@ const HighlightPlayer = ({ player }) => {
           Your browser does not support the video tag.
         </video>
 
-        {/* Overlay for player info */}
         <div className="player-overlay">
           <div className="highlight-player-initials-circle">
             {player.firstName?.[0]?.toUpperCase()}
             {player.lastName?.[0]?.toUpperCase()}
           </div>
           <div className="highlight-player-name-row">
-            {player.number && (
-              <div className="highlight-player-number">#{player.number}</div>
-            )}
-            <div className="highlight-player-name">{player.name}</div>
+            {player.number && <div>#{player.number}</div>}
+            <div>{player.name}</div>
           </div>
-          <div className="highlight-event">
-            {currentHighlight.event || "Starting..."}
-          </div>
+          <div className="highlight-event">{currentHighlight.event}</div>
         </div>
         <HighlightControlPanel
           isPlaying={isPlaying}

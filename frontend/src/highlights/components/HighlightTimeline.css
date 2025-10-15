@@ -3,44 +3,26 @@
   overflow-x: auto;
   padding: 12px 16px;
   border-top: 1px solid #ddd;
-  background-color: #f9fafb;
-  gap: 14px;
-  scroll-behavior: smooth;
-  width: 100%;
-  max-height: 70px;
-  box-sizing: border-box;
+  gap: 12px;
 }
 
 .highlight-button {
-  flex: 0 0 auto;
   padding: 8px 16px;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   background-color: #ffffff;
-  color: #333;
   cursor: pointer;
   font-size: 0.95rem;
-  font-weight: 500;
   white-space: nowrap;
-  transition: all 0.25s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .highlight-button:hover {
-  background-color: #f1f3f5;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+  background-color: #e6f0ff;
+  transform: scale(1.03);
 }
 
 .highlight-button.active {
   background-color: #0d6efd;
-  color: #fff;
+  color: #ffffff;
   border-color: #0d6efd;
-  box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-  transform: translateY(-2px);
-}
-
-.highlight-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

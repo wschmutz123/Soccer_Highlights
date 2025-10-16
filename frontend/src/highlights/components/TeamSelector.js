@@ -17,7 +17,7 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
 
   const [selectedTeamId, setSelectedTeamId] = useState("");
 
-  const initialized = useRef(false);
+  const initializedRef = useRef(false);
 
   const safeNavigate = useCallback(
     (path) => {
@@ -32,7 +32,7 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
    * Ensures this initialization runs only once using a ref.
    */
   useEffect(() => {
-    if (teams.length === 0 || initialized.current) return;
+    if (teams.length === 0 || initializedRef.current) return;
     let initialTeam = null;
     if (initialTeamId) {
       initialTeam = teams.find((t) => t.id === initialTeamId);
@@ -46,7 +46,7 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
       safeNavigate("/");
     }
 
-    initialized.current = true;
+    initializedRef.current = true;
   }, [teams, initialTeamId, onSelectTeam, safeNavigate]);
 
   // Handle dropdown change

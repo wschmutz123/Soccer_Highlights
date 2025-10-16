@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState, useRef } from "react";
 import { useQuery, gql } from "@apollo/client";
 
 import "./PlayerList.css"; // Dedicated CSS file for the list
@@ -33,6 +33,7 @@ const PlayerList = ({
 }) => {
   const teamHash = team?.id || "";
   const [isDisabled, setIsDisabled] = useState(false);
+  const initializedRef = useRef(false);
 
   const { loading, error, data } = useQuery(GET_TEAM_MEMBERS, {
     variables: { teamHash },
@@ -67,8 +68,9 @@ const PlayerList = ({
    * Notify parent component that the players have been loaded.
    */
   useEffect(() => {
-    if (teamPlayers?.length && onPlayersLoaded) {
+    if (!initializedRef.current && teamPlayers?.length && onPlayersLoaded) {
       onPlayersLoaded(teamPlayers);
+      initializedRef.current = true;
     }
   }, [teamPlayers, onPlayersLoaded]);
 

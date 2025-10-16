@@ -242,10 +242,6 @@ const HighlightPlayer = ({ player }) => {
         currentHighlightIndex={currentHighlightIndex}
         onSelectHighlight={(index) => {
           setCurrentHighlightIndex(index);
-          const video = videoRef.current;
-          if (video) {
-            setIsPlaying(true);
-          }
         }}
       />
       <div>

@@ -82,18 +82,11 @@ const HighlightPlayer = ({ player }) => {
 
         setVideoError(false);
 
-        if (!highlightLoaded && videoRef.current && currentHighlight) {
-          videoRef.current.currentTime = currentHighlight.start;
-          setHighlightLoaded(true);
-          if (isPlaying)
-            videoRef.current.play().catch(() => setVideoError(true));
-        }
-
         const video = videoRef.current;
-        if (video && !highlightLoaded) {
+        if (!highlightLoaded && video && currentHighlight) {
           video.currentTime = currentHighlight.start;
-          if (isPlaying) await video.play();
           setHighlightLoaded(true);
+          if (isPlaying) video.play().catch(() => setVideoError(true));
         }
       } catch {
         setVideoError(true);
@@ -142,6 +135,7 @@ const HighlightPlayer = ({ player }) => {
     if (nextIndex < highlights.length) {
       setCurrentHighlightIndex(nextIndex);
       setIsPlaying(true);
+      setHighlightLoaded(false);
     } else {
       setIsPlaying(false);
       videoRef.current?.pause();
@@ -154,6 +148,10 @@ const HighlightPlayer = ({ player }) => {
     if (prevIndex >= 0) {
       setCurrentHighlightIndex(prevIndex);
       setIsPlaying(true);
+      setHighlightLoaded(false);
+    } else {
+      setIsPlaying(false);
+      videoRef.current?.pause();
     }
   };
 
@@ -226,14 +224,6 @@ const HighlightPlayer = ({ player }) => {
           src={currentHighlight.videoUrl}
           controls={false}
           muted={true}
-          onLoadedMetadata={() => {
-            if (!highlightLoaded && videoRef.current && currentHighlight) {
-              videoRef.current.currentTime = currentHighlight.start;
-              setHighlightLoaded(true);
-              if (isPlaying)
-                videoRef.current.play().catch(() => setVideoError(true));
-            }
-          }}
           onError={() => {
             setVideoError(true);
           }}

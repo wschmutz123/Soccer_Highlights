@@ -31,7 +31,6 @@ const HighlightPlayer = ({ player }) => {
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [videoError, setVideoError] = useState(false);
-  const [highlightLoaded, setHighlightLoaded] = useState(false);
   const [isLoadingHighlight, setIsLoadingHighlight] = useState(false);
 
   const { loading, error, data } = useQuery(GET_PLAYER_HIGHLIGHTS, {
@@ -83,29 +82,19 @@ const HighlightPlayer = ({ player }) => {
         setVideoError(false);
 
         const video = videoRef.current;
-        if (!highlightLoaded && video && currentHighlight) {
+        if (video && currentHighlight) {
+          setIsPlaying(true);
           video.currentTime = currentHighlight.start;
-          setHighlightLoaded(true);
-          if (isPlaying) video.play().catch(() => setVideoError(true));
+          video.play().catch(() => setVideoError(true));
         }
       } catch {
         setVideoError(true);
-        setHighlightLoaded(false);
       } finally {
         setIsLoadingHighlight(false);
       }
     };
 
     playHighlight();
-  }, [currentHighlight, isPlaying]);
-
-  /**
-   * Resets the highlightLoaded flag whenever a new highlight
-   * is selected, so the first effect knows to jump to start.
-   */
-  useEffect(() => {
-    setHighlightLoaded(false);
-    setIsPlaying(true); // autoplay new highlight
   }, [currentHighlight]);
 
   /**
@@ -135,7 +124,6 @@ const HighlightPlayer = ({ player }) => {
     if (nextIndex < highlights.length) {
       setCurrentHighlightIndex(nextIndex);
       setIsPlaying(true);
-      setHighlightLoaded(false);
     } else {
       setIsPlaying(false);
       videoRef.current?.pause();
@@ -148,7 +136,6 @@ const HighlightPlayer = ({ player }) => {
     if (prevIndex >= 0) {
       setCurrentHighlightIndex(prevIndex);
       setIsPlaying(true);
-      setHighlightLoaded(false);
     } else {
       setIsPlaying(false);
       videoRef.current?.pause();
@@ -255,7 +242,6 @@ const HighlightPlayer = ({ player }) => {
         currentHighlightIndex={currentHighlightIndex}
         onSelectHighlight={(index) => {
           setCurrentHighlightIndex(index);
-          setHighlightLoaded(false);
           const video = videoRef.current;
           if (video) {
             setIsPlaying(true);

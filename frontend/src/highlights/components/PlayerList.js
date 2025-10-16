@@ -129,8 +129,13 @@ const PlayerList = ({
               <div className="player-info-column">
                 <div className="player-initials-circle">{initials}</div>
                 <div className="player-name-row">
-                  {player.number && <div>#{player.number}</div>}
-                  <div>{player.name}</div>
+                  {player.number ? (
+                    <div>
+                      #{player.number} {player.name}
+                    </div>
+                  ) : (
+                    <div>{player.name}</div>
+                  )}
                 </div>
               </div>
             </li>

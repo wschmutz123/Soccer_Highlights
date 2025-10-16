@@ -14,7 +14,6 @@
 
 .sidebar {
   width: 30%;
-  min-width: 300px; /* ensures it never gets too small */
   flex-shrink: 0; /* prevents it from shrinking */
   overflow-y: auto;
 }

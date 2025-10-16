@@ -78,6 +78,8 @@
   gap: 4px;
   font-weight: 500;
   font-size: 15px;
+  overflow-wrap: break-word; /* wrap long names */
+  word-break: break-word; /* ensures long words break */
 }
 
 /* Active name */

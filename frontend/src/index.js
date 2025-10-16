@@ -26,11 +26,14 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        // The main page route, handles the initial / and the deep links
+        // Handles the initial / and the deep links
         path: "/:teamId?/:playerId?",
-        element: <SoccerHighlightsPage />,
+        element: (
+          <TeamsProvider>
+            <SoccerHighlightsPage />
+          </TeamsProvider>
+        ),
       },
-      // Add other pages
     ],
   },
 ]);
@@ -38,8 +41,6 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ApolloProvider client={client}>
-    <TeamsProvider>
-      <RouterProvider router={router} />
-    </TeamsProvider>
+    <RouterProvider router={router} />
   </ApolloProvider>
 );

@@ -1,5 +1,34 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap");
 
+/*
+:root {
+  --primary-color: #0d6efd;
+  --primary-color-hover: e6f0ff;
+  --text-color-light: #ffffff;
+  --background-light: #ffffff;
+  --background-dark: #000000;
+}
+*/
+
+:root {
+  /* Primary brand color */
+  --primary-color: #4a90e2; /* softer blue */
+  --primary-color-hover: #d6e4fa; /* light, calming hover */
+
+  /* Text colors */
+  --text-color-light: #f7f7f7; /* soft off-white */
+  --text-color-dark: #1e1e1e; /* softer black/charcoal */
+
+  /* Background colors */
+  --background-light: #ffffff; /* light gray/blue for gentle contrast */
+  --background-dark: #121212; /* deep dark, not pure black */
+
+  /* Secondary colors (optional) */
+  --secondary-color: #a0c4ff; /* pastel blue */
+  --secondary-color-hover: #cce0ff; /* light hover for secondary elements */
+  --accent-color: #ffd166; /* warm accent for highlights */
+}
+
 * {
   box-sizing: border-box;
 }

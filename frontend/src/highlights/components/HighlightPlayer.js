@@ -32,6 +32,7 @@ const HighlightPlayer = ({ player }) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [videoError, setVideoError] = useState(false);
   const [highlightLoaded, setHighlightLoaded] = useState(false);
+  const [isLoadingHighlight, setIsLoadingHighlight] = useState(false);
 
   const { loading, error, data } = useQuery(GET_PLAYER_HIGHLIGHTS, {
     variables: { teamPlayerId: teamPlayerId },
@@ -64,18 +65,46 @@ const HighlightPlayer = ({ player }) => {
   const currentHighlight = highlights[currentHighlightIndex];
 
   /**
-   * Sets the video playback to the current highlight's start time
-   * and starts playback if `isPlaying` is true.
-   * Only runs once per highlight using the `highlightLoaded` flag.
+   * Automatically plays the current highlight whenever it changes.
+   * - Checks that the video URL is valid before attempting playback.
+   * - Finds the highlight's start time, plays video, and handles errors
    */
   useEffect(() => {
-    const video = videoRef.current;
-    if (video && currentHighlight && !highlightLoaded) {
-      video.currentTime = currentHighlight.start; // only set once per highlight
-      if (isPlaying) video.play().catch(() => setVideoError(true));
-      setHighlightLoaded(true);
-    }
-  }, [currentHighlight, highlightLoaded, isPlaying]);
+    const playHighlight = async () => {
+      if (!currentHighlight?.videoUrl) return;
+
+      setIsLoadingHighlight(true);
+
+      try {
+        // Check URL first
+        const res = await fetch(currentHighlight.videoUrl, { method: "HEAD" });
+        if (!res.ok) throw new Error("Video not found");
+
+        setVideoError(false);
+
+        if (!highlightLoaded && videoRef.current && currentHighlight) {
+          videoRef.current.currentTime = currentHighlight.start;
+          setHighlightLoaded(true);
+          if (isPlaying)
+            videoRef.current.play().catch(() => setVideoError(true));
+        }
+
+        const video = videoRef.current;
+        if (video && !highlightLoaded) {
+          video.currentTime = currentHighlight.start;
+          if (isPlaying) await video.play();
+          setHighlightLoaded(true);
+        }
+      } catch {
+        setVideoError(true);
+        setHighlightLoaded(false);
+      } finally {
+        setIsLoadingHighlight(false);
+      }
+    };
+
+    playHighlight();
+  }, [currentHighlight, isPlaying]);
 
   /**
    * Resets the highlightLoaded flag whenever a new highlight
@@ -86,6 +115,9 @@ const HighlightPlayer = ({ player }) => {
     setIsPlaying(true); // autoplay new highlight
   }, [currentHighlight]);
 
+  /**
+   * Handles progression of currently playing highlight video
+   */
   const handleVideoTimeUpdate = () => {
     const video = videoRef.current;
     if (!video || !currentHighlight) return;
@@ -172,7 +204,7 @@ const HighlightPlayer = ({ player }) => {
     );
   }
 
-  if (highlights.length === 0) {
+  if (!loading && highlights.length === 0) {
     return (
       <div className="highlight-player-placeholder">
         No highlights available for {player.name}.
@@ -183,6 +215,11 @@ const HighlightPlayer = ({ player }) => {
   return (
     <div className="highlight-player-container">
       <div className="video-wrapper">
+        {isLoadingHighlight && (
+          <div className="overlay">
+            <div className="spinner" />
+          </div>
+        )}
         <HlsPlayer
           className="highlight-video-player"
           playerRef={videoRef}
@@ -197,7 +234,9 @@ const HighlightPlayer = ({ player }) => {
                 videoRef.current.play().catch(() => setVideoError(true));
             }
           }}
-          onError={() => setVideoError(true)}
+          onError={() => {
+            setVideoError(true);
+          }}
           onTimeUpdate={handleVideoTimeUpdate}
         />
 
@@ -226,6 +265,7 @@ const HighlightPlayer = ({ player }) => {
         currentHighlightIndex={currentHighlightIndex}
         onSelectHighlight={(index) => {
           setCurrentHighlightIndex(index);
+          setHighlightLoaded(false);
           const video = videoRef.current;
           if (video) {
             setIsPlaying(true);
@@ -234,7 +274,7 @@ const HighlightPlayer = ({ player }) => {
       />
       <div>
         {videoError && (
-          <div className="video-error-overlay">
+          <div className="overlay">
             ⚠️ Couldn't load video
             <button
               className="video-error-close"

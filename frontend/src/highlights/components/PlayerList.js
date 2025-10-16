@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { useQuery, gql } from "@apollo/client";
 
 import "./PlayerList.css"; // Dedicated CSS file for the list
@@ -32,6 +32,7 @@ const PlayerList = ({
   selectedPlayer,
 }) => {
   const teamHash = team?.id || "";
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const { loading, error, data } = useQuery(GET_TEAM_MEMBERS, {
     variables: { teamHash },
@@ -75,6 +76,16 @@ const PlayerList = ({
     return <div className="player-list-info">Please select a team.</div>;
   }
 
+  const handlePlayerClick = (player) => {
+    if (isDisabled) return; // Ignore clicks while disabled
+    setIsDisabled(true);
+
+    onSelectPlayer(player);
+
+    // Re-enable clicks after 1 second
+    setTimeout(() => setIsDisabled(false), 1000);
+  };
+
   if (loading) {
     return (
       <div className="player-list-loading">
@@ -110,8 +121,8 @@ const PlayerList = ({
               key={player.id}
               className={`player-list-item ${
                 selectedPlayer?.id === player.id ? "active" : ""
-              }`}
-              onClick={() => onSelectPlayer(player)}
+              } ${isDisabled ? "disabled" : ""}`}
+              onClick={() => handlePlayerClick(player)}
             >
               <div className="player-info-column">
                 <div className="player-initials-circle">{initials}</div>

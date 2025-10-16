@@ -17,8 +17,8 @@
   height: 40px;
   border-radius: 50%;
   border: none;
-  background-color: #007bff;
-  color: #ffffff;
+  background-color: var(--primary-color);
+  color: var(--text-color-light);
   display: flex;
   justify-content: center;
   align-items: center;

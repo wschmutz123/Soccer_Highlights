@@ -7,7 +7,6 @@ import "./TeamSelector.css";
 
 /**
  * TeamSelector Component
- * @param {object} props - Component props
  * @param {function} props.onSelectTeam - Callback function when a team is selected
  * @param {string} props.initialTeamId - The teamId in the url
  */
@@ -72,11 +71,11 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
     label: team.name,
   }));
 
-  if (isLoading) {
+  if (isLoading || teams.length === 0) {
     return <div className="team-selector-loading">Loading teams...</div>;
   }
 
-  if (teams.length === 0) {
+  if (!isLoading && teams.length === 0) {
     return <div className="team-selector-error">No teams available.</div>;
   }
 
@@ -84,7 +83,6 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
     <div className="team-selector-container">
       <Select
         options={teamOptions}
-        // React Select expects the *object* for the current value
         value={teamOptions.find((opt) => opt.value === selectedTeamId) || null}
         onChange={(selectedOption) => handleTeamChange(selectedOption?.value)}
         placeholder="Choose a Team"

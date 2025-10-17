@@ -75,7 +75,6 @@ const HighlightPlayer = ({ player }) => {
       setIsLoadingHighlight(true);
 
       try {
-        // Check URL first
         const res = await fetch(currentHighlight.videoUrl, { method: "HEAD" });
         if (!res.ok) throw new Error("Video not found");
 
@@ -109,7 +108,6 @@ const HighlightPlayer = ({ player }) => {
         setCurrentHighlightIndex(currentHighlightIndex + 1);
       } else {
         video.pause();
-        video.currentTime = currentHighlight.end;
         setIsPlaying(false);
       }
     }

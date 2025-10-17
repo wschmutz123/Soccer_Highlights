@@ -8,11 +8,11 @@
 
 .highlight-button {
   padding: 8px 16px;
-  border: 1px solid #e0e0e0;
+  border: 2px solid var(--border-color);
   border-radius: 10px;
   background-color: var(--background-light);
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 15px;
   white-space: nowrap;
 }
 
@@ -24,5 +24,4 @@
 .highlight-button.active {
   background-color: var(--primary-color);
   color: var(--background-light);
-  border-color: var(--primary-color);
 }

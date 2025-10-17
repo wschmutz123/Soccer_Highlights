@@ -1,47 +1,40 @@
-/* Container */
 .player-list-container {
   width: 100%;
-  margin-left: 10px;
-  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-left: 10px;
+  padding: 10px;
 }
 
-/* Player list */
 .player-items-list {
-  padding: 0;
-  margin: 0;
   max-height: calc(100vh - 180px);
   display: flex;
   flex-direction: column;
+  padding: 0;
+  margin: 0;
   gap: 10px;
 }
 
-/* List item */
 .player-list-item {
   display: flex;
   flex-direction: column;
+  background-color: var(--background-light);
   padding: 12px 16px;
   cursor: pointer;
-  border: 2px solid var(--background-light);
+  border: 2px solid var(--border-color);
   border-radius: 20px;
-  background-color: var(--background-light);
 }
 
 .player-list-item:hover {
   background-color: var(--primary-color-hover);
-  transform: translateY(-2px);
-  transform: scale(1.03);
+  transform: translateY(-2px) scale(1.03);
 }
 
-/* Active player */
 .player-list-item.active {
   background-color: var(--primary-color);
-  border-radius: 20px;
 }
 
-/* Active initials */
 .player-list-item.active .player-initials-circle {
   background-color: var(--background-light);
   color: var(--primary-color);
@@ -58,7 +51,6 @@
   gap: 4px;
 }
 
-/* Player initials */
 .player-initials-circle {
   width: 40px;
   height: 40px;
@@ -76,23 +68,20 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-weight: 500;
   font-size: 15px;
   overflow-wrap: break-word; /* wrap long names */
   word-break: break-word; /* ensures long words break */
 }
 
-/* Active name */
 .player-list-item.active .player-name-row {
   color: var(--text-color-light);
 }
 
-/* Loading/info text */
 .player-list-loading,
 .player-list-info {
   text-align: center;
   padding: 20px 10px;
   color: #6c757d;
   font-style: italic;
-  font-size: 14px;
+  font-size: 15px;
 }

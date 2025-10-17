@@ -37,7 +37,7 @@ export const TeamsProvider = ({ children }) => {
         .sort((a, b) => a.name.localeCompare(b.name));
 
       setTeams(standardizedTeams);
-      localStorage.setItem("teams", JSON.stringify(standardizedTeams)); // persist
+      localStorage.setItem("teams", JSON.stringify(standardizedTeams));
     } catch (err) {
       console.error("Error fetching teams:", err);
     } finally {

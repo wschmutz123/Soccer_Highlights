@@ -19,7 +19,6 @@ const GET_PLAYER_HIGHLIGHTS = gql`
 `;
 
 /**
- * HighlightPlayer Component (The Main Video Area)
  * @param {object} props.player - The currently selected player object.
  */
 const HighlightPlayer = ({ player }) => {
@@ -55,7 +54,7 @@ const HighlightPlayer = ({ player }) => {
         duration: h.duration,
       }));
       setHighlights(mapped);
-      setCurrentHighlightIndex(0); // start from first highlight
+      setCurrentHighlightIndex(0);
     } else {
       setHighlights([]);
     }
@@ -65,8 +64,8 @@ const HighlightPlayer = ({ player }) => {
 
   /**
    * Automatically plays the current highlight whenever it changes.
-   * - Checks that the video URL is valid before attempting playback.
-   * - Finds the highlight's start time, plays video, and handles errors
+   * Checks that the video URL is valid before attempting playback.
+   * Finds the highlight's start time, plays video, and handles errors
    */
   useEffect(() => {
     const playHighlight = async () => {
@@ -115,7 +114,7 @@ const HighlightPlayer = ({ player }) => {
 
   /**
    * Advances playback to the next highlight in the list.
-   * If currently at the last highlight, pauses the video and stops playback .
+   * If currently at the last highlight, pauses the video and stops playback.
    */
   const playNextHighlight = () => {
     const nextIndex = currentHighlightIndex + 1;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./HighlightTimeline.css";
 
 /**
@@ -7,13 +7,20 @@ import "./HighlightTimeline.css";
  *
  * @param {Object[]} highlights - Array of highlight objects with `event` and timing info
  * @param {number} currentHighlightIndex - Index of the currently selected highlight
- * @param {function} onSelectHighlight - Callback fired when a highlight is clicked, receives the highlight index
+ * @param {function} onSelectHighlight - Callback fired when a highlight is clicked
  */
 const HighlightTimeline = ({
   highlights,
   currentHighlightIndex,
   onSelectHighlight,
 }) => {
+  const [disabled, setDisabled] = useState(false);
+
+  const handleClick = (index) => {
+    setDisabled(true);
+    onSelectHighlight(index);
+    setTimeout(() => setDisabled(false), 1000);
+  };
   return (
     <div className="highlights-timeline">
       {highlights.map((h, index) => (
@@ -22,7 +29,8 @@ const HighlightTimeline = ({
           className={`highlight-button ${
             index === currentHighlightIndex ? "active" : ""
           }`}
-          onClick={() => onSelectHighlight(index)}
+          onClick={() => handleClick(index)}
+          disabled={disabled}
         >
           {h.event} ({h.duration.toFixed(2)}s)
         </button>

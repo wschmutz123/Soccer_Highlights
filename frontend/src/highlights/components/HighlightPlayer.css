@@ -4,11 +4,11 @@
 
 .video-wrapper {
   width: 100%;
+  background-color: var(--background-dark);
   aspect-ratio: 16/9; /* cleaner than padding-bottom hack */
   position: relative;
-  border-radius: 6px;
-  overflow: hidden;
-  background-color: var(--background-dark);
+  border-radius: 10px;
+  overflow: hidden; /* clips video corners */
   margin-bottom: 20px;
 }
 
@@ -20,8 +20,10 @@
   height: 100%;
 }
 
-/* Overlay for player info */
 .player-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: absolute;
   top: 10px;
   left: 10px;
@@ -29,13 +31,13 @@
   color: var(--text-color-light);
   padding: 8px 12px;
   border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 4px;
 }
 
 .highlight-player-initials-circle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -43,9 +45,6 @@
   color: var(--text-color-light);
   font-weight: bold;
   font-size: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .highlight-player-name-row {
@@ -60,17 +59,18 @@
   font-size: 12px;
 }
 
-/* Loading / Placeholder */
 .highlight-player-loading,
 .highlight-player-placeholder {
   color: #a0a0a0;
   text-align: center;
   padding: 50px;
   font-size: 1.5rem;
-  align-self: center;
 }
 
 .overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
   top: 0;
   left: 0;
@@ -78,19 +78,15 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
   color: var(--text-color-light);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-weight: bold;
-  font-size: 1.2rem;
-  z-index: 20;
+  font-size: 20px;
 }
 
 .video-error-close {
   background: transparent;
   border: none;
   color: var(--text-color-light);
-  font-size: 1.2rem;
+  font-size: 20px;
   cursor: pointer;
 }
 

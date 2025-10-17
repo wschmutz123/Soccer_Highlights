@@ -19,7 +19,6 @@ const GET_TEAM_MEMBERS = gql`
 `;
 
 /**
- * PlayerList Component (The Left Side Panel)
  * @param {object} props.team - The currently selected team object.
  * @param {function} props.onSelectPlayer - Callback function when a player is clicked.
  * @param {function} props.onPlayersLoaded - Callback function when players are loaded.
@@ -56,7 +55,7 @@ const PlayerList = ({
         number: m.jersey_number,
       }))
       .sort((a, b) => {
-        // Sort by jersey number first, then first name, then last name
+        // Sort by jersey number first, then name
         const numA = Number(a.number) || 0;
         const numB = Number(b.number) || 0;
         if (numA !== numB) return numA - numB;

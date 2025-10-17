@@ -1,8 +1,7 @@
-/* Top-level container */
 .highlights-page-layout {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   background-color: #f4f7f9;
   padding: 20px;
 }
@@ -19,7 +18,7 @@
 }
 
 .main-content {
-  flex-grow: 1;
+  flex-grow: 1; /* Expands to fill remaining horizontal space */
   display: flex;
   flex-direction: column;
   overflow: hidden;

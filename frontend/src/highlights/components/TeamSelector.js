@@ -88,6 +88,16 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
         placeholder="Choose a Team"
         isClearable
         className="team-selector"
+        styles={{
+          control: (base) => ({
+            ...base,
+            borderRadius: "12px",
+          }),
+          menu: (base) => ({
+            ...base,
+            borderRadius: "12px",
+          }),
+        }}
       />
     </div>
   );

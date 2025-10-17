@@ -48,7 +48,7 @@ const SoccerHighlightsPage = () => {
 
   /**
    * Callback when players for a team have loaded.
-   * Sets players in state and selects the player if playerIdRef is set.
+   * Selects the player if playerIdRef is set.
    * @param {Array} loadedPlayers - Array of player objects for the selected team.
    */
   const handlePlayersLoaded = (loadedPlayers) => {
@@ -58,7 +58,7 @@ const SoccerHighlightsPage = () => {
       );
       if (player) {
         handlePlayerSelect(player);
-        initialPlayerSelectedRef.current = true; // mark as done
+        initialPlayerSelectedRef.current = true;
       }
     }
   };

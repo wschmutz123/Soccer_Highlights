@@ -13,7 +13,6 @@ import App from "./App";
 import SoccerHighlightsPage from "./highlights/pages/SoccerHighlightsPage";
 import { TeamsProvider } from "./highlights/context/TeamsContext";
 
-// 1. Create the Apollo Client instance
 const client = new ApolloClient({
   link: new HttpLink({
     uri: "https://lapi.traceup.com/traceid-dev/graphql",
@@ -26,7 +25,6 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        // Handles the initial / and the deep links
         path: "/:teamId?/:playerId?",
         element: (
           <TeamsProvider>

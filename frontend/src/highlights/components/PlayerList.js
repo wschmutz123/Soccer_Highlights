@@ -73,19 +73,21 @@ const PlayerList = ({
     }
   }, [teamPlayers, onPlayersLoaded]);
 
-  if (!teamHash) {
-    return <div className="player-list-info">Please select a team.</div>;
-  }
-
+  /**
+   * Disables player buttons for 1 second and calls function to setPlayer
+   */
   const handlePlayerClick = (player) => {
-    if (isDisabled) return; // Ignore clicks while disabled
+    if (isDisabled) return;
     setIsDisabled(true);
 
     onSelectPlayer(player);
 
-    // Re-enable clicks after 1 second
     setTimeout(() => setIsDisabled(false), 1000);
   };
+
+  if (!teamHash) {
+    return <div className="player-list-info">Please select a team.</div>;
+  }
 
   if (loading) {
     return (

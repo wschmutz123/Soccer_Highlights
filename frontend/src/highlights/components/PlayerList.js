@@ -3,7 +3,7 @@ import { useQuery, gql } from "@apollo/client";
 
 import "./PlayerList.css"; // Dedicated CSS file for the list
 
-const GET_TEAM_MEMBERS = gql`
+export const GET_TEAM_MEMBERS = gql`
   query TeamMembers($teamHash: String!) {
     teamMembers(team_hash: $teamHash) {
       team_player_id # Unique Team Member ID

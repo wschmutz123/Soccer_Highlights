@@ -6,7 +6,7 @@ import HlsPlayer from "react-hls-player";
 
 import "./HighlightPlayer.css";
 
-const GET_PLAYER_HIGHLIGHTS = gql`
+export const GET_PLAYER_HIGHLIGHTS = gql`
   query TeamPlayerMomentsInfo($teamPlayerId: Int!) {
     teamPlayerMomentsInfo(team_player_id: $teamPlayerId) {
       duration

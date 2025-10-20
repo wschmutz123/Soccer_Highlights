@@ -71,7 +71,7 @@ const TeamSelector = ({ onSelectTeam, initialTeamId }) => {
     label: team.name,
   }));
 
-  if (isLoading || teams.length === 0) {
+  if (isLoading) {
     return <div className="team-selector-loading">Loading teams...</div>;
   }
 

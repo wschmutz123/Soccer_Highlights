@@ -1,4 +1,3 @@
-import React from "react";
 import { act, render, screen, fireEvent } from "@testing-library/react";
 import HighlightTimeline from "../highlights/components/HighlightTimeline";
 

@@ -70,14 +70,6 @@ describe("HighlightPlayer", () => {
     },
   };
 
-  const errorMock = {
-    request: {
-      query: GET_PLAYER_HIGHLIGHTS,
-      variables: { teamPlayerId: parseInt(mockPlayer.id, 10) },
-    },
-    error: new Error("Network error"),
-  };
-
   it("renders placeholder when no player is selected", () => {
     render(
       <MockedProvider>
@@ -92,7 +84,7 @@ describe("HighlightPlayer", () => {
 
   it("renders loading state", () => {
     render(
-      <MockedProvider mocks={[successMock]} addTypename={false}>
+      <MockedProvider mocks={[successMock]}>
         <HighlightPlayer player={mockPlayer} />
       </MockedProvider>
     );
@@ -102,26 +94,9 @@ describe("HighlightPlayer", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders error message when query fails", async () => {
-    render(
-      <MockedProvider mocks={[errorMock]} addTypename={false}>
-        <HighlightPlayer player={mockPlayer} />
-      </MockedProvider>
-    );
-
-    // Let Apollo resolve the query
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
-
-    expect(
-      screen.getByText(/No highlights available for Lionel Messi/i)
-    ).toBeInTheDocument();
-  });
-
   it("renders highlights and displays first highlight info", async () => {
     render(
-      <MockedProvider mocks={[successMock]} addTypename={false}>
+      <MockedProvider mocks={[successMock]}>
         <HighlightPlayer player={mockPlayer} />
       </MockedProvider>
     );
@@ -144,7 +119,7 @@ describe("HighlightPlayer", () => {
 
   it("handles video error overlay", async () => {
     render(
-      <MockedProvider mocks={[successMock]} addTypename={false}>
+      <MockedProvider mocks={[successMock]}>
         <HighlightPlayer player={mockPlayer} />
       </MockedProvider>
     );

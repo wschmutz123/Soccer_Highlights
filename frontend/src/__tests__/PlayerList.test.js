@@ -65,7 +65,7 @@ describe("PlayerList", () => {
 
   it("renders loading state", () => {
     render(
-      <MockedProvider mocks={[successMock]} addTypename={false}>
+      <MockedProvider mocks={[successMock]}>
         <BrowserRouter>
           <PlayerList team={mockTeam} />
         </BrowserRouter>
@@ -87,7 +87,7 @@ describe("PlayerList", () => {
     };
 
     render(
-      <MockedProvider mocks={[emptyMock]} addTypename={false}>
+      <MockedProvider mocks={[emptyMock]}>
         <BrowserRouter>
           <PlayerList team={mockTeam} />
         </BrowserRouter>
@@ -103,7 +103,7 @@ describe("PlayerList", () => {
 
   it("renders list of players and calls onPlayersLoaded", async () => {
     render(
-      <MockedProvider mocks={[successMock]} addTypename={false}>
+      <MockedProvider mocks={[successMock]}>
         <BrowserRouter>
           <PlayerList
             team={mockTeam}
@@ -123,7 +123,7 @@ describe("PlayerList", () => {
 
   it("disables player click for 1 second after selection", async () => {
     render(
-      <MockedProvider mocks={[successMock]} addTypename={false}>
+      <MockedProvider mocks={[successMock]}>
         <BrowserRouter>
           <PlayerList
             team={mockTeam}

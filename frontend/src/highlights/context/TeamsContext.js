@@ -54,6 +54,18 @@ export const TeamsProvider = ({ children }) => {
     }
   }, []);
 
+  /**   
+  useEffect(() => {
+    const interval = setInterval(
+      () => {
+        fetchTeams();
+      },
+      1000 * 60 * 5
+    ); // refresh every 5 minutes
+    return () => clearInterval(interval);
+  }, [fetchTeams]);
+  */
+
   return (
     <TeamsContext.Provider value={{ teams, isLoading }}>
       {children}

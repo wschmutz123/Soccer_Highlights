@@ -15,12 +15,28 @@ const HighlightTimeline = ({
   onSelectHighlight,
 }) => {
   const [disabled, setDisabled] = useState(false);
+  // const timeoutRef = useRef(null);
 
   const handleClick = (index) => {
     setDisabled(true);
     onSelectHighlight(index);
-    setTimeout(() => setDisabled(false), 1000);
+    // timeoutRef.current =
+    setTimeout(() => {
+      setDisabled(false);
+      // timeoutRef.current = null;
+    }, 1000);
   };
+
+  /*
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+  */
+
   return (
     <div className="highlights-timeline">
       {highlights.map((h, index) => (

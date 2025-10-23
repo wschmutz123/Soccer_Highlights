@@ -68,13 +68,19 @@ const HighlightPlayer = ({ player }) => {
    * Finds the highlight's start time, plays video, and handles errors
    */
   useEffect(() => {
-    const playHighlight = async () => {
-      if (!currentHighlight?.videoUrl) return;
+    if (!currentHighlight?.videoUrl) return;
 
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const playHighlight = async () => {
       setIsLoadingHighlight(true);
 
       try {
-        const res = await fetch(currentHighlight.videoUrl, { method: "HEAD" });
+        const res = await fetch(currentHighlight.videoUrl, {
+          method: "HEAD",
+          signal,
+        });
         if (!res.ok) throw new Error("Video not found");
 
         setVideoError(false);
@@ -85,7 +91,10 @@ const HighlightPlayer = ({ player }) => {
           video.currentTime = currentHighlight.start;
           video.play().catch(() => setVideoError(true));
         }
-      } catch {
+      } catch (err) {
+        if (err.name === "AbortError") {
+          return;
+        }
         setVideoError(true);
       } finally {
         setIsLoadingHighlight(false);
@@ -93,6 +102,9 @@ const HighlightPlayer = ({ player }) => {
     };
 
     playHighlight();
+    return () => {
+      controller.abort();
+    };
   }, [currentHighlight]);
 
   /**
@@ -225,13 +237,15 @@ const HighlightPlayer = ({ player }) => {
           </div>
           <div className="highlight-event">{currentHighlight.event}</div>
         </div>
-        <HighlightControlPanel
-          isPlaying={isPlaying}
-          onPlayPause={togglePlayPause}
-          onNext={playNextHighlight}
-          onPrevious={playPreviousHighlight}
-          onSkip={skipTime}
-        />
+        {!videoError && (
+          <HighlightControlPanel
+            isPlaying={isPlaying}
+            onPlayPause={togglePlayPause}
+            onNext={playNextHighlight}
+            onPrevious={playPreviousHighlight}
+            onSkip={skipTime}
+          />
+        )}
       </div>
 
       <HighlightTimeline

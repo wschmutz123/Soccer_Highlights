@@ -55,7 +55,7 @@ const PlayerList = ({
         number: m.jersey_number,
       }))
       .sort((a, b) => {
-        // Sort by jersey number first, then name
+        // Sort by jersey number first, then name // Infinity
         const numA = Number(a.number) || 0;
         const numB = Number(b.number) || 0;
         if (numA !== numB) return numA - numB;

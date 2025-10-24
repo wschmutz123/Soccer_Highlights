@@ -11,7 +11,6 @@ import {
 } from "@apollo/client";
 import App from "./App";
 import SoccerHighlightsPage from "./highlights/pages/SoccerHighlightsPage";
-import { TeamsProvider } from "./highlights/context/TeamsContext";
 
 const client = new ApolloClient({
   link: new HttpLink({
@@ -26,11 +25,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/:teamId?/:playerId?",
-        element: (
-          <TeamsProvider>
-            <SoccerHighlightsPage />
-          </TeamsProvider>
-        ),
+        element: <SoccerHighlightsPage />,
       },
     ],
   },

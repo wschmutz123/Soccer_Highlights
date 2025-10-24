@@ -70,16 +70,12 @@ const HighlightPlayer = ({ player }) => {
   useEffect(() => {
     if (!currentHighlight?.videoUrl) return;
 
-    const controller = new AbortController();
-    const signal = controller.signal;
-
     const playHighlight = async () => {
       setIsLoadingHighlight(true);
 
       try {
         const res = await fetch(currentHighlight.videoUrl, {
           method: "HEAD",
-          signal,
         });
         if (!res.ok) throw new Error("Video not found");
 
@@ -92,9 +88,6 @@ const HighlightPlayer = ({ player }) => {
           video.play().catch(() => setVideoError(true));
         }
       } catch (err) {
-        if (err.name === "AbortError") {
-          return;
-        }
         setVideoError(true);
       } finally {
         setIsLoadingHighlight(false);
@@ -102,9 +95,6 @@ const HighlightPlayer = ({ player }) => {
     };
 
     playHighlight();
-    return () => {
-      controller.abort();
-    };
   }, [currentHighlight]);
 
   /**

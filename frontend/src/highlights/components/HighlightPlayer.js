@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useQuery, gql } from "@apollo/client";
 import HighlightTimeline from "./HighlightTimeline";
 import HighlightControlPanel from "./HighlightControlPanel";
-import ReactHlsPlayer from "@gumlet/react-hls-player";
+import Hls from "hls.js";
 
 import "./HighlightPlayer.css";
 
@@ -18,31 +18,22 @@ export const GET_PLAYER_HIGHLIGHTS = gql`
   }
 `;
 
-/**
- * @param {object} props.player - The currently selected player object.
- */
 const HighlightPlayer = ({ player }) => {
   const teamPlayerId = player?.id ? parseInt(player.id, 10) : null;
-
   const videoRef = useRef(null);
+  const hlsRef = useRef(null);
 
   const [highlights, setHighlights] = useState([]);
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [videoError, setVideoError] = useState(false);
-  const [isLoadingHighlight, setIsLoadingHighlight] = useState(false);
 
   const { loading, error, data } = useQuery(GET_PLAYER_HIGHLIGHTS, {
-    variables: { teamPlayerId: teamPlayerId },
+    variables: { teamPlayerId },
     skip: !teamPlayerId || isNaN(teamPlayerId),
   });
 
-  /**
-   * Updates the highlights state whenever new player highlight data arrives.
-   * Maps the raw `teamPlayerMomentsInfo` data to a structured format
-   * Resets the current highlight index to 0 to start playback from the first highlight.
-   * If no highlight data exists, clears the highlights array.
-   */
+  // Map highlights data
   useEffect(() => {
     if (data?.teamPlayerMomentsInfo?.length > 0) {
       const mapped = data.teamPlayerMomentsInfo.map((h) => ({
@@ -62,35 +53,31 @@ const HighlightPlayer = ({ player }) => {
 
   const currentHighlight = highlights[currentHighlightIndex];
 
-  /**
-   * Automatically plays the current highlight whenever it changes.
-   * Checks that the video URL is valid before attempting playback.
-   * Finds the highlight's start time, plays video, and handles errors
-   */
+  // Load and play HLS video
   useEffect(() => {
-    if (!currentHighlight?.videoUrl) return;
+    if (!currentHighlight?.videoUrl || !videoRef.current) return;
+
+    const video = videoRef.current;
+
+    // Destroy previous instance
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
 
     const playHighlight = async () => {
-      setIsLoadingHighlight(true);
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hlsRef.current = hls;
 
-      try {
-        const res = await fetch(currentHighlight.videoUrl, {
-          method: "HEAD",
-        });
-        if (!res.ok) throw new Error("Video not found");
+        hls.attachMedia(video);
+        hls.loadSource(currentHighlight.videoUrl);
 
-        setVideoError(false);
-
-        const video = videoRef.current;
-        if (video && currentHighlight) {
-          setIsPlaying(true);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
           video.currentTime = currentHighlight.start;
+          setIsPlaying(true);
           video.play().catch(() => setVideoError(true));
-        }
-      } catch (err) {
-        setVideoError(true);
-      } finally {
-        setIsLoadingHighlight(false);
+        });
       }
     };
 
@@ -164,56 +151,35 @@ const HighlightPlayer = ({ player }) => {
     setIsPlaying(!isPlaying);
   };
 
-  if (!player) {
+  if (!player)
     return (
       <div className="highlight-player-placeholder">
         Choose a Team and Player to get Highlights
       </div>
     );
-  }
-
-  if (loading) {
+  if (loading)
     return (
       <div className="highlight-player-loading">
         Loading highlights for {player.name}...
       </div>
     );
-  }
-
-  if (error) {
+  if (error || highlights.length === 0)
     return (
       <div className="highlight-player-placeholder">
         No highlights available for {player.name}.
       </div>
     );
-  }
-
-  if (!loading && highlights.length === 0) {
-    return (
-      <div className="highlight-player-placeholder">
-        No highlights available for {player.name}.
-      </div>
-    );
-  }
 
   return (
     <div className="highlight-player-container">
       <div className="video-wrapper">
-        {isLoadingHighlight && (
-          <div className="overlay">
-            <div className="spinner" />
-          </div>
-        )}
-        <ReactHlsPlayer
+        <video
+          ref={videoRef}
           className="highlight-video-player"
-          playerRef={videoRef}
-          src={currentHighlight.videoUrl}
+          muted
           controls={false}
-          muted={true}
-          onError={() => {
-            setVideoError(true);
-          }}
           onTimeUpdate={handleVideoTimeUpdate}
+          style={{ width: "100%", height: "100%" }}
         />
 
         <div className="player-overlay">
@@ -227,23 +193,20 @@ const HighlightPlayer = ({ player }) => {
           </div>
           <div className="highlight-event">{currentHighlight.event}</div>
         </div>
-        {!videoError && (
-          <HighlightControlPanel
-            isPlaying={isPlaying}
-            onPlayPause={togglePlayPause}
-            onNext={playNextHighlight}
-            onPrevious={playPreviousHighlight}
-            onSkip={skipTime}
-          />
-        )}
+
+        <HighlightControlPanel
+          isPlaying={isPlaying}
+          onPlayPause={togglePlayPause}
+          onNext={playNextHighlight}
+          onPrevious={playPreviousHighlight}
+          onSkip={skipTime}
+        />
       </div>
 
       <HighlightTimeline
         highlights={highlights}
         currentHighlightIndex={currentHighlightIndex}
-        onSelectHighlight={(index) => {
-          setCurrentHighlightIndex(index);
-        }}
+        onSelectHighlight={(index) => setCurrentHighlightIndex(index)}
       />
       <div>
         {videoError && (

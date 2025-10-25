@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import TeamSelector from "../components/TeamSelector";
 import PlayerList from "../components/PlayerList";
 import HighlightPlayer from "../components/HighlightPlayer";
-import { useTeams } from "../context/TeamsContext";
+import { useTeams } from "../hooks/useTeams";
 
 import "./SoccerHighlightsPage.css";
 

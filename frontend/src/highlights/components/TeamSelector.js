@@ -1,5 +1,5 @@
 import React from "react";
-import { useTeams } from "../context/TeamsContext";
+import { useTeams } from "../hooks/useTeams";
 import Select from "react-select";
 
 import "./TeamSelector.css";

@@ -33,7 +33,12 @@ const HighlightPlayer = ({ player }) => {
     skip: !teamPlayerId || isNaN(teamPlayerId),
   });
 
-  // Map highlights data
+  /**
+   * Updates the highlights state whenever new player highlight data arrives.
+   * Maps the raw `teamPlayerMomentsInfo` data to a structured format
+   * Resets the current highlight index to 0 to start playback from the first highlight.
+   * If no highlight data exists, clears the highlights array.
+   */
   useEffect(() => {
     if (data?.teamPlayerMomentsInfo?.length > 0) {
       const mapped = data.teamPlayerMomentsInfo.map((h) => ({

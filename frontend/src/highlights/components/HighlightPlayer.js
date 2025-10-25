@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useQuery, gql } from "@apollo/client";
 import HighlightTimeline from "./HighlightTimeline";
 import HighlightControlPanel from "./HighlightControlPanel";
-import HlsPlayer from "react-hls-player";
+import ReactHlsPlayer from "@gumlet/react-hls-player";
 
 import "./HighlightPlayer.css";
 
@@ -204,7 +204,7 @@ const HighlightPlayer = ({ player }) => {
             <div className="spinner" />
           </div>
         )}
-        <HlsPlayer
+        <ReactHlsPlayer
           className="highlight-video-player"
           playerRef={videoRef}
           src={currentHighlight.videoUrl}

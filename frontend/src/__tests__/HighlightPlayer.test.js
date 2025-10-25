@@ -16,9 +16,10 @@ jest.spyOn(console, "warn").mockImplementation((msg) => {
   console.warn(msg);
 });
 
-jest.mock("react-hls-player", () => () => (
-  <div data-testid="mock-hls-player" />
-));
+jest.mock("@gumlet/react-hls-player", () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-hls-player" />,
+}));
 
 const mockFetch = (url, options) => {
   if (url.startsWith("https://test/") && options.method === "HEAD") {

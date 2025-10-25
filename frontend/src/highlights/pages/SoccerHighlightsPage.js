@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TeamSelector from "../components/TeamSelector";
 import PlayerList from "../components/PlayerList";
@@ -11,12 +11,16 @@ const SoccerHighlightsPage = () => {
   const navigate = useNavigate();
   const { teamId, playerId } = useParams();
 
-  const playerIdRef = useRef(playerId);
-  const initialPlayerSelectedRef = useRef(false);
-
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const { teams } = useTeams();
+
+  const safeNavigate = useCallback(
+    (path) => {
+      navigate(path);
+    },
+    [navigate]
+  );
 
   /**
    * Updates the selected team and player, then navigates to the appropriate route.
@@ -25,48 +29,82 @@ const SoccerHighlightsPage = () => {
    * - Navigates to `/{teamId}/{playerId}` if both are selected.
    * @param {object|null} [team=selectedTeam] - The selected team object, or null to reset.
    * @param {object|null} [player=selectedPlayer] - The selected player object, or null if none.
+   * @param {bool} [firstPass] - Check for if teamId should be rendered on firstPass
    */
-  const updateSelection = (team = selectedTeam, player = selectedPlayer) => {
-    setSelectedTeam(team);
-    setSelectedPlayer(player);
+  const updateSelection = useCallback(
+    (team, player, firstPass = false) => {
+      setSelectedTeam(team);
+      setSelectedPlayer(player);
 
-    if (!team) {
-      navigate(`/`);
-      return;
+      if (!team) {
+        safeNavigate("/");
+        return;
+      }
+
+      if (!player) {
+        if (!firstPass) {
+          safeNavigate(`/${team.id}`);
+        }
+        return;
+      }
+
+      safeNavigate(`/${team.id}/${player.id}`);
+    },
+    [safeNavigate]
+  );
+
+  const handleTeamSelect = useCallback(
+    (team, firstPass = false) => updateSelection(team, null, firstPass),
+    [updateSelection]
+  );
+  const handlePlayerSelect = useCallback(
+    (player) => updateSelection(selectedTeam, player),
+    [selectedTeam, updateSelection]
+  );
+
+  useEffect(() => {
+    if (teams.length === 0) return;
+    let initialTeam = null;
+    if (teamId) {
+      initialTeam = teams.find((t) => t.id === teamId);
     }
 
-    if (!player) {
-      navigate(`/${team.id}`);
-      return;
+    if (initialTeam) {
+      handleTeamSelect(initialTeam, true);
+    } else {
+      handleTeamSelect(null, false);
     }
-
-    navigate(`/${team.id}/${player.id}`);
-  };
-
-  const handleTeamSelect = (team) => updateSelection(team, null);
-  const handlePlayerSelect = (player) => updateSelection(selectedTeam, player);
+  }, [teams, handleTeamSelect, teamId]);
 
   /**
    * Callback when players for a team have loaded.
    * Selects the player if playerIdRef is set.
    * @param {Array} loadedPlayers - Array of player objects for the selected team.
    */
-  const handlePlayersLoaded = (loadedPlayers) => {
-    if (!initialPlayerSelectedRef.current && playerIdRef.current) {
-      const player = loadedPlayers.find(
-        (p) => String(p.id) === String(playerIdRef.current)
-      );
-      if (player) {
-        handlePlayerSelect(player);
-        initialPlayerSelectedRef.current = true;
+  const handlePlayersLoaded = useCallback(
+    (loadedPlayers) => {
+      if (playerId) {
+        const player = loadedPlayers.find(
+          (p) => String(p.id) === String(playerId)
+        );
+
+        if (player) {
+          handlePlayerSelect(player);
+        } else {
+          safeNavigate(`/${selectedTeam.id}`);
+        }
       }
-    }
-  };
+    },
+    [handlePlayerSelect, playerId, safeNavigate, selectedTeam]
+  );
 
   return (
     <div className="highlights-page-layout">
       <header>
-        <TeamSelector onSelectTeam={handleTeamSelect} initialTeamId={teamId} />
+        <TeamSelector
+          selectedTeam={selectedTeam}
+          setSelectedTeam={handleTeamSelect}
+        />
       </header>
       <main className="main-layout">
         <aside className="sidebar">
@@ -80,7 +118,7 @@ const SoccerHighlightsPage = () => {
           )}
         </aside>
         <section className="main-content">
-          {teams && <HighlightPlayer player={selectedPlayer} />}
+          <HighlightPlayer player={selectedPlayer} />
         </section>
       </main>
     </div>
